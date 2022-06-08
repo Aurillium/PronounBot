@@ -3,7 +3,7 @@ const { make_sentences } = require("../sentence_generator.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-none")
-	.setDescription("Try out using no pronouns!")
+	.setDescription("Try using no pronouns!")
 	.addStringOption(option =>
 		option.setName("name")
 			.setDescription("The name you'd like to try.")
