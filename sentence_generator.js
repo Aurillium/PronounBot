@@ -1,19 +1,23 @@
-const { name_singular_sentences, nameless_singular_sentences, name_plural_sentences, nameless_plural_sentences } = require('./sentences.json');
+const { name_singular_sentences, nameless_singular_sentences, name_plural_sentences, nameless_plural_sentences, no_pronouns } = require('./sentences.json');
 
 exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural) {
     var sentences;
-	if (name !== null) {
-		if (plural) {
-			sentences = name_plural_sentences;
+	if (reflexive !== null) {
+		if (name !== null) {
+			if (plural) {
+				sentences = name_plural_sentences;
+			} else {
+				sentences = name_singular_sentences;
+			}
 		} else {
-			sentences = name_singular_sentences;
+			if (plural) {
+				sentences = nameless_plural_sentences;
+			} else {
+				sentences = nameless_singular_sentences;
+			}
 		}
 	} else {
-		if (plural) {
-			sentences = nameless_plural_sentences;
-		} else {
-			sentences = nameless_singular_sentences;
-		}
+		sentences = no_pronouns;
 	}
     name ??= "";
 	let indexes_used = [];

@@ -28,5 +28,11 @@
         "*[^subjective] see trees so green, red roses too\n[^subjective] see them bloom for [objective] and you.\nAnd [subjective] think to [reflexive] what a wonderful world*",
         "\"You don't think that was [objective], right?\"\n\"Of course not, [subjective] would never be here by [reflexive], [subjective] always bring [possessive] dog around. There's just no way it's [objective].\"",
         "Please kneel for [^subjective] Grace, our Royal Majesty. There are many exploits of [possessive2], including how [subjective] [reflexive] raised our country from ruin. Long live our Liege!"
+    ],
+    "no_pronouns": [
+        "Hey, did you see [name] today? I think I saw [name] walking [name]'s pet crab. I don't know how [name] takes care of it all alone, it must be some trick of [name]'s.",
+        "Would you mind inviting [name] to my party tomorrow? I don't have [name]'s number but I think it'd be really fun if [name] came! I'd hate for [name] to just be at home alone.",
+        "Today, I would like to welcome [name] to our illustrious Magus Academy! [name] has been proven through [name]'s scores on the entrance exam, and we are thrilled to have [name] joining us as our newest apprentice mage!",
+        "I heard [name]'s going into the forest this weekend to find a pet mushroom. I don't know what [name]'s doing with [name]'s life that [name]'d want a mushroom, but you know what, good for [name]. I'm glad [name]'s doing something nice for once."
     ]
 }
