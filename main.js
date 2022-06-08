@@ -54,5 +54,5 @@ client.on('interactionCreate', async interaction => {
 	await responses[interaction.commandName](interaction);
 });
 
-// https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=277025392640&scope=bot%20applications.commands
+// https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot
 client.login(token);
