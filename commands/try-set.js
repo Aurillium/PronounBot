@@ -11,7 +11,7 @@ exports.data = new SlashCommandBuilder()
 	)
 	.addStringOption(option =>
 		option.setName("name")
-			.setDescription("The name you'd like to try (optional)")
+			.setDescription("The name you'd like to try (optional).")
 			.setRequired(false)
 	)
 	.addBooleanOption(option =>
