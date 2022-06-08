@@ -1,0 +1,5 @@
+[
+    ["he", "him", "his", "his", "himself", false, ["masculine", "binary"]],
+    ["she", "her", "her", "hers", "herself", false, ["feminine", "binary"]],
+    ["they", "them", "their", "theirs", "themself", true, ["androgynous"]]
+]
