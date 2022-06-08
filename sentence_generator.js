@@ -20,6 +20,11 @@ exports.make_sentences = function(subjective, objective, possessive, second_poss
 		sentences = no_pronouns;
 	}
     name ??= "";
+	subjective ??= "";
+	objective ??= "";
+	possessive ??= "";
+	second_possessive ??= "";
+	reflexive ??= "";
 	let indexes_used = [];
 	let response = "Okay, how do these look?";
 	while (true) {
