@@ -1,16 +1,12 @@
 const { Client, Intents } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { token } = require('./config.json');
+const { token, client_id, testing_guild, testing_mode } = require('./config.json');
 const fs = require('node:fs');
 
 const commands = [];
 const responses = {};
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-const clientId = '983907393823969312';
-const guildId = '536455056443310080';
-const testing = false;
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
@@ -24,14 +20,14 @@ const rest = new REST({ version: '9' }).setToken(token);
 	try {
 		console.log('Started refreshing slash commands.');
 
-		if (testing) {
+		if (testing_mode) {
 			await rest.put(	
-				Routes.applicationGuildCommands(clientId, guildId),
+				Routes.applicationGuildCommands(client_id, testing_guild),
 				{ body: commands },
 			);
 		} else {
 			await rest.put(
-				Routes.applicationCommands(clientId),
+				Routes.applicationCommands(client_id),
 				{ body: commands },
 			);			
 		}
