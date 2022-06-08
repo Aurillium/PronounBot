@@ -1,6 +1,6 @@
 # Pronoun Bot
 
-Pronoun Bot is a bot for transgender, nonbinary, genderqueer, and any other gender-questioning people that can be used to try out new pronouns and names. It was written in Node.js
+Pronoun Bot is a Discord bot for transgender, nonbinary, genderqueer, and any other gender-questioning people that can be used to try out new pronouns and names. It was written in Node.js
 
 ## How to use me
 
