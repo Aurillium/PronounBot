@@ -36,7 +36,7 @@ exports.data = new SlashCommandBuilder()
 	)
 	.addBooleanOption(option =>
 		option.setName("plural")
-			.setDescription("Whether the pronoun set is plural or singular.")
+			.setDescription("Whether the pronoun set is plural or singular (default singular).")
 			.setRequired(false)
 	);
 
