@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
 
 exports.data = new SlashCommandBuilder()
-	.setName("tryset")
+	.setName("try-set")
 	.setDescription("Tries out a pronoun set!")
 	.addStringOption(option =>
 		option.setName("set")
