@@ -29,7 +29,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 			await rest.put(
 				Routes.applicationCommands(client_id),
 				{ body: commands },
-			);			
+			);
 		}
 
 		console.log('Successfully reloaded slash commands.');
