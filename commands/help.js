@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { client_id } = require('../config.json');
 
 const helpEmbed = new MessageEmbed()
 	.setColor("#FF8758")
@@ -14,6 +15,18 @@ exports.data = new SlashCommandBuilder()
 	.setName('help')
 	.setDescription('Displays help on the bot and pronouns!');
 
+const row = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setURL("https://discord.gg/ZnRzV469rJ")
+					.setLabel("Support Server")
+					.setStyle("LINK"),
+				new MessageButton()
+					.setURL(`https://discord.com/api/oauth2/authorize?client_id=${client_id}&permissions=2147483648&scope=bot%20applications.commands`)
+					.setLabel("Invite Link")
+					.setStyle("LINK"),
+			);
+
 exports.response = async function(interaction) {
-	interaction.reply({embeds: [helpEmbed]});
+	interaction.reply({embeds: [helpEmbed], components: [row]});
 }
