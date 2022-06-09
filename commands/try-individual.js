@@ -51,4 +51,4 @@ exports.response = async function(interaction) {
 	interaction.reply(make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural));
 }
 
-exports.doc = `Try out a set of pronouns by specifying one of each type of pronoun in a set, then optionally add a name and whether the pronouns are plural or singular`;
+exports.doc = `Try out a set of pronouns by specifying one of each type of pronoun in a set, then optionally add a name and whether the pronouns are plural or singular.`;

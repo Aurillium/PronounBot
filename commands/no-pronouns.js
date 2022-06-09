@@ -14,4 +14,4 @@ exports.response = async function(interaction) {
 	interaction.reply(make_sentences(null, null, null, null, null, interaction.options.getString("name"), false));
 }
 
-exports.doc = `Try out using no pronouns! All you need to specify is a name and the bot will give you some example sentences!`;
+exports.doc = `Try out using no pronouns. All you need to specify is a name and the bot will give you some example sentences.`;
