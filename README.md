@@ -5,8 +5,9 @@ Pronoun Bot is a Discord bot for transgender, nonbinary, genderqueer, and any ot
 ## How to use me
 
 - You can use /help to learn how pronouns and the bot works
-- Use /try to try out individual pronouns in a set
-- Use /try-set to try out a set separated by '/'s
+- Use `/try` to try out individual pronouns in a set
+- Use `/try-set` to try out a set separated by '/'s
+- Use `/try-none` to try using no pronouns (only a name)
 
 You can choose to specify a name or leave it blank if you're unsure, and you can specify whether the pronouns are plural or singular.
 
@@ -15,7 +16,9 @@ The bot will generate some sentences for you so you can see if these pronouns ar
 
 ## Invite link?
 
-[Right here](https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot)
+[Right here](https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot%20applications.commands).
+
+You can also join the support server [here](https://discord.gg/ZnRzV469rJ).
 
 ## Credits
 
