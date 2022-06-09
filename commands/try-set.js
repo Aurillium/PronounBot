@@ -43,3 +43,5 @@ exports.response = async function(interaction) {
 	let plural = interaction.options.getBoolean("plural") ?? false;
 	interaction.reply(make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural));
 }
+
+exports.doc = `Try out a set of pronouns in the form of 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive', then optionally add a name and tell the bot if the pronouns are plural.`;

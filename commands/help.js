@@ -30,3 +30,5 @@ const row = new MessageActionRow()
 exports.response = async function(interaction) {
 	interaction.reply({embeds: [helpEmbed], components: [row]});
 }
+
+exports.doc = `Display information about the bot`

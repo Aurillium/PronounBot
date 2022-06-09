@@ -1,4 +1,5 @@
-const { Client, Intents } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { Client, Intents, MessageEmbed } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode } = require('./config.json');
@@ -8,10 +9,31 @@ const commands = [];
 const responses = {};
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
+var commandsEmbed = new MessageEmbed()
+	.setColor("#FF8758")
+	.setTitle("Command List")
+	.setDescription("Here's a list of commands for Pronouns Bot:")
+	.setAuthor({ name: "Aurillium", iconURL: "https://avatars.githubusercontent.com/u/57483028", url: "https://github.com/Aurillium" });
+
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	commands.push(command.data.toJSON());
 	responses[command.data.name] = command.response;
+
+	let command_string = "/" + command.data.name;
+	command.data.options.forEach(option => {
+		let j = option.toJSON();
+		if (j.required) {
+			command_string += " <" + option.toJSON().name + ">";
+		} else {
+			command_string += " [" + option.toJSON().name + "]";
+		}
+	});
+	commandsEmbed = commandsEmbed.addField(command.data.name, command.doc + "\n**Usage:** `" + command_string + "`");
+}
+commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
+responses["commands"] = async function(interaction) {
+	interaction.reply({embeds: [commandsEmbed]});
 }
 
 const rest = new REST({ version: '9' }).setToken(token);
