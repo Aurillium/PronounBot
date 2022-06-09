@@ -101,5 +101,5 @@ process.on("SIGINT", () => {
 	});
 });
 
-// https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot
+// https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot%20applications.commands
 client.login(token);
