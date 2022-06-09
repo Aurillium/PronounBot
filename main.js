@@ -12,7 +12,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 var commandsEmbed = new MessageEmbed()
 	.setColor("#FF8758")
 	.setTitle("Command List")
-	.setDescription("Here's a list of commands for Pronouns Bot:")
+	.setDescription("Here's a list of commands for Pronouns Bot:\n(Required arguments look like `<this>` and optional ones look like `[this]`)")
 	.setAuthor({ name: "Aurillium", iconURL: "https://avatars.githubusercontent.com/u/57483028", url: "https://github.com/Aurillium" });
 
 for (const file of commandFiles) {
