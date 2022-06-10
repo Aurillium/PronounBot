@@ -29,7 +29,7 @@ for (const file of commandFiles) {
 			command_string += " [" + option.toJSON().name + "]";
 		}
 	});
-	commandsEmbed = commandsEmbed.addField(command.data.name, command.doc + "\n**Usage:** `" + command_string + "`");
+	commandsEmbed = commandsEmbed.addField(command.data.name, command.doc + "\n**Usage:** `" + command_string + "`\n");
 }
 commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
 responses["commands"] = async function(interaction) {
