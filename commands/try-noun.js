@@ -17,7 +17,7 @@ exports.data = new SlashCommandBuilder()
 
 exports.response = async function(interaction) {
 	let noun = interaction.options.getString("noun");
-	interaction.reply(make_sentences(noun, noun, noun + "s", noun + "s", noun + "self", interaction.options.getString("name"), false));
+	interaction.reply(make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false));
 }
 
-exports.doc = `Try out using no pronouns. All you need to specify is a name and the bot will give you some example sentences.`;
+exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;
