@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
+const { delete_row } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-noun")
@@ -22,7 +23,7 @@ exports.data = new SlashCommandBuilder()
 exports.response = async function(interaction) {
 	let noun = interaction.options.getString("noun");
 	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false), ephemeral: hidden});
+	interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;

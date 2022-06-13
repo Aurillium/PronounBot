@@ -6,8 +6,14 @@ const { token, client_id, testing_guild, testing_mode } = require('./config.json
 const fs = require('node:fs');
 
 const commands = [];
-const responses = {};
+const command_responses = {};
+const button_responses = {};
+const button_files = fs.readdirSync('./buttons').filter(file => file.endsWith('.js'));
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of button_files) {
+	button_responses[file.slice(0, -3)] = require("./buttons/" + file).response;
+}
 
 var commandsEmbed = new MessageEmbed()
 	.setColor("#FF8758")
@@ -18,7 +24,7 @@ var commandsEmbed = new MessageEmbed()
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	commands.push(command.data.toJSON());
-	responses[command.data.name] = command.response;
+	command_responses[command.data.name] = command.response;
 
 	let command_string = "/" + command.data.name;
 	command.data.options.forEach(option => {
@@ -32,7 +38,7 @@ for (const file of commandFiles) {
 	commandsEmbed = commandsEmbed.addField(command.data.name, command.doc + "\n**Usage:** `" + command_string + "`\n** **");
 }
 commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
-responses["commands"] = async function(interaction) {
+command_responses["commands"] = async function(interaction) {
 	interaction.reply({embeds: [commandsEmbed]});
 }
 
@@ -72,8 +78,11 @@ client.on('ready', () => {
 });
 
 client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
-	await responses[interaction.commandName](interaction);
+	if (interaction.isCommand()) {
+		await command_responses[interaction.commandName](interaction);
+	} else if (interaction.isButton()) {
+		await button_responses[interaction.customId](interaction);
+	}
 });
 
 async function onExit() {
