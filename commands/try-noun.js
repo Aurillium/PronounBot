@@ -13,11 +13,16 @@ exports.data = new SlashCommandBuilder()
 		option.setName("name")
 			.setDescription("The name you'd like to try.")
 			.setRequired(false)
+	).addBooleanOption(option =>
+		option.setName("hidden")
+			.setDescription("Make the message only visible to you.")
+			.setRequired(false)
 	);
 
 exports.response = async function(interaction) {
 	let noun = interaction.options.getString("noun");
-	interaction.reply(make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false));
+	let hidden = interaction.options.getBoolean("hidden") ?? false;
+	interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false), ephemeral: hidden});
 }
 
 exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;

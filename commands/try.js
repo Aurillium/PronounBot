@@ -38,6 +38,10 @@ exports.data = new SlashCommandBuilder()
 		option.setName("plural")
 			.setDescription("Whether the pronoun set is plural or singular (default singular).")
 			.setRequired(false)
+	).addBooleanOption(option =>
+		option.setName("hidden")
+			.setDescription("Make the message only visible to you.")
+			.setRequired(false)
 	);
 
 exports.response = async function(interaction) {
@@ -48,7 +52,8 @@ exports.response = async function(interaction) {
 	let second_possessive = interaction.options.getString("second_possessive") ?? possessive;
 	let name = interaction.options.getString("name");
 	let plural = interaction.options.getBoolean("plural") ?? false;
-	interaction.reply(make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural));
+	let hidden = interaction.options.getBoolean("hidden") ?? false;
+	interaction.reply({content: make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural), ephemeral: hidden});
 }
 
 exports.doc = `Try out a set of pronouns by specifying one of each type of pronoun in a set, then optionally add a name and whether the pronouns are plural or singular.`;
