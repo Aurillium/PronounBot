@@ -3,6 +3,7 @@ const { Client, Intents, MessageEmbed } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode } = require('./config.json');
+const { message_embed } = require("../shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
 
@@ -82,9 +83,18 @@ client.on('ready', () => {
 
 client.on('interactionCreate', async interaction => {
 	if (interaction.isCommand()) {
-		await command_responses[interaction.commandName](interaction, db);
+		if (interaction.commandName in command_responses) {
+			await command_responses[interaction.commandName](interaction, db);
+		} else {
+			await interaction.reply({embeds: message_embed("That command isn't loaded in this version!", "#FF0000")})
+		}
 	} else if (interaction.isButton()) {
-		await button_responses[interaction.customId](interaction, db);
+		let handler_name, argument = interaction.customId.split(":", 1);
+		if (handler_name in button_responses) {
+			await button_responses[handler_name](interaction, argument, db);
+		} else {
+			await interaction.reply({embeds: message_embed(`That button isn't loaded in this version!\nCustom ID: "${interaction.customId}"`, "#FF0000")})
+		}
 	}
 });
 
