@@ -98,14 +98,16 @@ client.on('interactionCreate', async interaction => {
 		if (interaction.commandName in command_responses) {
 			await command_responses[interaction.commandName](interaction, db);
 		} else {
-			await interaction.reply({embeds: message_embed("That command isn't loaded in this version!", "#FF0000")})
+			await interaction.reply({embeds: [message_embed("That command isn't loaded in this version!", "#FF0000")]})
 		}
 	} else if (interaction.isButton()) {
-		let handler_name, argument = interaction.customId.split(":", 1);
+		let custom_id = interaction.customId.split(":", 2);
+		let handler_name = custom_id[0];
+		let argument = custom_id[1];
 		if (handler_name in button_responses) {
 			await button_responses[handler_name](interaction, argument, db);
 		} else {
-			await interaction.reply({embeds: message_embed(`That button isn't loaded in this version!\nCustom ID: "${interaction.customId}"`, "#FF0000")})
+			await interaction.reply({embeds: [message_embed(`That button isn't loaded in this version!\nCustom ID: "${interaction.customId}"`, "#FF0000")]})
 		}
 	}
 });
