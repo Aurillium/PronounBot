@@ -2,3 +2,4 @@ config.json
 node_modules/
 icon.jpeg
 pronouns.db
+migrate.py
