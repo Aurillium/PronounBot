@@ -1,32 +1,31 @@
-const { name_singular_sentences, nameless_singular_sentences, name_plural_sentences, nameless_plural_sentences, no_pronouns } = require('./sentences.json');
-const pronouns = require('./pronouns.json');
-
 const SENTENCE_NUMBER = 3;
 
-exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural) {
-    var sentences;
+exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural, db) {
+	var type;
 	if (subjective !== null) {
 		if (name !== null) {
 			if (plural) {
-				sentences = [...name_plural_sentences];
+				type = 2;
 			} else {
-				sentences = [...name_singular_sentences];
+				type = 0;
 			}
 		} else {
 			if (plural) {
-				sentences = [...nameless_plural_sentences];
+				type = 3;
 			} else {
-				sentences = [...nameless_singular_sentences];
+				type = 1;
 			}
 		}
 	} else {
-		sentences = no_pronouns;
+		type = 4;
 	}
+	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
+
     name ??= "";
 	let response = "Okay, how do these look?";
 	for (let i = 0; i < SENTENCE_NUMBER; i++) {
 		let index = Math.floor(Math.random() * sentences.length);
-		let sentence = sentences.splice(index, 1)[0]
+		let sentence = sentences.splice(index, 1)[0].Sentence
 			.replaceAll("[name]", name)
 			.replaceAll("[^name]", name)
 			.replaceAll("[^name^]", name.toUpperCase());
@@ -68,42 +67,39 @@ function random_replace(text, old, new_list, processing, replacement=true) {
 	return text;
 }
 
-exports.make_all_pronouns = function(name, use_plural) {
-	var sets;
-	if (use_plural) {
-		sets = [...pronouns];
-	} else {
-		sets = pronouns.filter(set => {
-			return !set[5]
-		});
-	}
+exports.make_all_pronouns = function(name, use_plural, db) {
 	let subjectives = [];
 	let objectives = [];
 	let possessives = [];
 	let second_possessives = [];
 	let reflexives = [];
-
-	for (let i = 0; i < sets.length; i++) {
-		let set = sets[i];
-		subjectives.push(set[0]);
-		objectives.push(set[1]);
-		possessives.push(set[2]);
-		second_possessives.push(set[3]);
-		reflexives.push(set[4]);
-	}
-
-	var sentences;
-	if (name !== null) {
-		sentences = [...name_singular_sentences];
+	var statement;
+	if (use_plural) {
+		statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets");
 	} else {
-		sentences = [...nameless_singular_sentences];
+		statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets WHERE Plural=0");
 	}
+	for (const set of statement.iterate()) {
+		subjectives.push(set.Subjective);
+		objectives.push(set.Objective);
+		possessives.push(set.Possessive);
+		second_possessives.push(set.Possessive2);
+		reflexives.push(set.Reflexive);
+	}
+
+	var type;
+	if (name !== null) {
+		type = 0;
+	} else {
+		type = 1;
+	}
+	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
 
 	name ??= "";
 	let response = "Okay, how do these look?";
 	for (let i = 0; i < SENTENCE_NUMBER; i++) {
 		let index = Math.floor(Math.random() * sentences.length);
-		let sentence = sentences.splice(index, 1)[0]
+		let sentence = sentences.splice(index, 1)[0].Sentence
 			.replaceAll("[name]", name)
 			.replaceAll("[^name]", name)
 			.replaceAll("[^name^]", name.toUpperCase());

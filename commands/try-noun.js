@@ -20,10 +20,10 @@ exports.data = new SlashCommandBuilder()
 			.setRequired(false)
 	);
 
-exports.response = async function(interaction) {
+exports.response = async function(interaction, db) {
 	let noun = interaction.options.getString("noun");
 	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;

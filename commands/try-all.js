@@ -15,9 +15,9 @@ exports.data = new SlashCommandBuilder()
 			.setRequired(false)
 	);
 
-exports.response = async function(interaction) {
+exports.response = async function(interaction, db) {
 	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	interaction.reply({content: make_all_pronouns(interaction.options.getString("name"), false), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	interaction.reply({content: make_all_pronouns(interaction.options.getString("name"), false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out using all pronouns. Just optionally enter a name and the bot will give you some example sentences.`;

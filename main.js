@@ -3,7 +3,10 @@ const { Client, Intents, MessageEmbed } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode } = require('./config.json');
+const openDB = require('better-sqlite3');
 const fs = require('node:fs');
+
+const db = openDB("./pronouns.db");
 
 const commands = [];
 const command_responses = {};
@@ -79,9 +82,9 @@ client.on('ready', () => {
 
 client.on('interactionCreate', async interaction => {
 	if (interaction.isCommand()) {
-		await command_responses[interaction.commandName](interaction);
+		await command_responses[interaction.commandName](interaction, db);
 	} else if (interaction.isButton()) {
-		await button_responses[interaction.customId](interaction);
+		await button_responses[interaction.customId](interaction, db);
 	}
 });
 
