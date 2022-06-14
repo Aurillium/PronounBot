@@ -3,7 +3,7 @@ const { Client, Intents, MessageEmbed } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode } = require('./config.json');
-const { message_embed } = require("../shared.js");
+const { message_embed } = require("./shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
 
@@ -105,7 +105,7 @@ async function onExit() {
 		for (let i = 0; i < registered.length; i++) {
 			const id = registered[i];
 			let command = await guild.commands.fetch(id);
-			command.delete();
+			await command.delete();
 			console.log(`- Unregistered '${command.name}'.`);
 		}
 		console.log("Unregistered all commands; Exitting now.");
