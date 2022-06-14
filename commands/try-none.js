@@ -17,7 +17,7 @@ exports.data = new SlashCommandBuilder()
 
 exports.response = async function(interaction, db) {
 	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	interaction.reply({content: make_sentences(null, null, null, null, null, interaction.options.getString("name"), false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: make_sentences(null, null, null, null, null, interaction.options.getString("name"), false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out using no pronouns. All you need to specify is a name and the bot will give you some example sentences.`;

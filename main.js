@@ -43,7 +43,7 @@ for (const file of commandFiles) {
 }
 commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
 command_responses["commands"] = async function(interaction) {
-	interaction.reply({embeds: [commandsEmbed]});
+	await interaction.reply({embeds: [commandsEmbed]});
 }
 
 const rest = new REST({ version: '9' }).setToken(token);

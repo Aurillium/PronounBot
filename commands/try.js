@@ -54,7 +54,7 @@ exports.response = async function(interaction, db) {
 	let name = interaction.options.getString("name");
 	let plural = interaction.options.getBoolean("plural") ?? false;
 	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	interaction.reply({content: make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of pronouns by specifying one of each type of pronoun in a set, then optionally add a name and whether the pronouns are plural or singular.`;
