@@ -1,5 +1,7 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
+exports.sleep = ms => new Promise(r => setTimeout(r, ms));
+
 exports.delete_row = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
