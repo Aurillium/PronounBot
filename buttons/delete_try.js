@@ -3,7 +3,6 @@ const { message_embed } = require("../shared.js");
 exports.response = async function(interaction) {
     if (interaction.message.interaction.user.id === interaction.user.id) {
         try {
-            //console.log(interaction.message.interaction.user);
             await interaction.message.delete();
             await interaction.reply({embeds: [message_embed("Message deleted!", "#00FF00")], ephemeral: true});
         } catch (error) {
