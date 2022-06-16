@@ -1,4 +1,4 @@
-[![Discord Bots](https://top.gg/api/widget/servers/983907393823969312.svg)(https://top.gg/bot/983907393823969312) [![Discord Bots](https://top.gg/api/widget/upvotes/983907393823969312.svg)(https://top.gg/bot/983907393823969312)
+[![Discord Bots](https://top.gg/api/widget/servers/983907393823969312.svg)](https://top.gg/bot/983907393823969312) [![Discord Bots](https://top.gg/api/widget/upvotes/983907393823969312.svg)](https://top.gg/bot/983907393823969312)
 
 # Pronoun Bot
 
