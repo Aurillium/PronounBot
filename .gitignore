@@ -3,3 +3,4 @@ node_modules/
 icon.jpeg
 pronouns.db
 migrate.py
+add_sets.py
