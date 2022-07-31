@@ -15,6 +15,8 @@ const button_responses = {};
 const button_files = fs.readdirSync('./buttons').filter(file => file.endsWith('.js'));
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
+const author = { name: "Aurillium", iconURL: "https://avatars.githubusercontent.com/u/57483028", url: "https://github.com/Aurillium" };
+
 for (const file of button_files) {
 	button_responses[file.slice(0, -3)] = require("./buttons/" + file).response;
 }
@@ -23,7 +25,7 @@ var commandsEmbed = new MessageEmbed()
 	.setColor("#FF8758")
 	.setTitle("Command List")
 	.setDescription("Here's a list of commands for Pronouns Bot:\n(Required arguments look like `<this>` and optional ones look like `[this]`)")
-	.setAuthor({ name: "Aurillium", iconURL: "https://avatars.githubusercontent.com/u/57483028", url: "https://github.com/Aurillium" });
+	.setAuthor(author);
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
@@ -94,18 +96,34 @@ client.on('ready', () => {
 });
 
 client.on('interactionCreate', async interaction => {
-	if (interaction.isCommand()) {
-		if (interaction.commandName in command_responses) {
-			await command_responses[interaction.commandName](interaction, db);
-		} else {
-			await interaction.reply({embeds: [message_embed("That command isn't loaded in this version!", "#FF0000")]})
+	try {
+		if (interaction.isCommand()) {
+			if (interaction.commandName in command_responses) {
+				await command_responses[interaction.commandName](interaction, db);
+			} else {
+				await interaction.reply({embeds: [message_embed("That command isn't loaded in this version!", "#FF0000")]})
+			}
+		} else if (interaction.isButton()) {
+			const [handler_name, ...rest] = interaction.customId.split(":");
+			if (handler_name in button_responses) {
+				await button_responses[handler_name](interaction, rest.join(":"), db);
+			} else {
+				await interaction.reply({embeds: [message_embed(`That button isn't loaded in this version!\nCustom ID: "${interaction.customId}"`, "#FF0000")]})
+			}
 		}
-	} else if (interaction.isButton()) {
-		const [handler_name, ...rest] = interaction.customId.split(":");
-		if (handler_name in button_responses) {
-			await button_responses[handler_name](interaction, rest.join(":"), db);
-		} else {
-			await interaction.reply({embeds: [message_embed(`That button isn't loaded in this version!\nCustom ID: "${interaction.customId}"`, "#FF0000")]})
+	} catch (error) {
+		console.warn("=== ERROR ===");
+		console.warn("Error: " + error.message);
+		console.warn("Trace: " + error.stack);
+		var error_embed = new MessageEmbed()
+			.setColor("#FF0000")
+			.setTitle("Oops!")
+			.setAuthor(author)
+			.setDescription("**An error has occcurred.**\nPlease share the following information (along with what you were doing at the time) in a new issue on [GitHub](https://github.com/Aurillium/PronounBot/issues/new), or on our [support server](https://discord.gg/ZnRzV469rJ), and we will look into it and resolve it.\n\n**Stack Trace:**\n" + error.stack)
+		try {
+			await interaction.reply({embeds: [error_embed]});
+		} catch (error) {
+			await interaction.channel.send({embeds: [error_embed]});
 		}
 	}
 });
