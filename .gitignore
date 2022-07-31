@@ -1,5 +1,11 @@
+# Config
 config.json
+
+# Node stuff
 node_modules/
+package-lock.json
+
+# Other files
 icon.jpeg
 pronouns.db
 migrate.py
