@@ -1,6 +1,6 @@
 const SENTENCE_NUMBER = 3;
 
-exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural, db) {
+exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural, db, response="Okay, how do these look?") {
 	var type;
 	if (subjective !== null) {
 		if (name !== null) {
@@ -22,7 +22,6 @@ exports.make_sentences = function(subjective, objective, possessive, second_poss
 	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
 
     name ??= "";
-	let response = "Okay, how do these look?";
 	for (let i = 0; i < SENTENCE_NUMBER; i++) {
 		let index = Math.floor(Math.random() * sentences.length);
 		let sentence = sentences.splice(index, 1)[0].Sentence
