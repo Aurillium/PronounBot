@@ -12,6 +12,7 @@ This bot uses slash commands and will tell you how to fill in the information it
 - Use `/try-none` to try using no pronouns (only a name)
 - Use `/try-all` to try using all pronouns
 - Use `/try-noun` to try using a noun for pronouns
+- Use `/try-random` to let the bot pick a random set of pronouns for you
 
 You can choose to specify a name or leave it blank if you're unsure, and you can specify whether the pronouns are plural or singular.
 
