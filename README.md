@@ -20,7 +20,7 @@ The bot will generate some sentences for you so you can see if these pronouns ar
 
 ## Invite link?
 
-[Right here](https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot%20applications.commands).
+[Right here](https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147485696&scope=applications.commands%20bot).
 
 You can also join the support server [here](https://discord.gg/ZnRzV469rJ).
 This is our hub for all things Pronoun Bot. You can ask questions and get support with the bot, chat to other users, and suggest new features, sentences, and pronouns.
