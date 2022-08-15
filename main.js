@@ -131,8 +131,8 @@ client.on('interactionCreate', async interaction => {
 
 client.on('messageCreate', async message => {
 
-	//if (!message.mentions.members.map(user => user.id).includes(client.user.id)) return;
-	if (message.content == null) return;
+	if (!message.mentions.members.map(user => user.id).includes(client.user.id)) return;
+	//if (message.content == null) return;
 	if (message.author.bot) return;
 
 	const deleter = new MessageActionRow()
