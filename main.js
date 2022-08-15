@@ -130,6 +130,8 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.on('messageCreate', async message => {
+	try {
+
 	//if (!message.mentions.members.map(user => user.id).includes(client.user.id)) return;
 	if (message.content == null) return;
 	if (message.author.bot) return;
@@ -288,6 +290,10 @@ client.on('messageCreate', async message => {
 		await dm.send({content: "`" + JSON.stringify(args) + "`", components: [deleter]})
 	} else {
 		await message.reply({content: sentences, components: [deleter]});
+	}
+
+	} catch (error) {
+		// 
 	}
 });
 
