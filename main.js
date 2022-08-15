@@ -3,7 +3,7 @@ const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = requi
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode } = require('./config.json');
-const { message_embed, sleep, delete_row } = require("./shared.js");
+const { message_embed, sleep } = require("./shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
 const { make_sentences, make_one_command_sentences } = require('./sentence_generator');
@@ -77,7 +77,7 @@ const registered = [];
 	}
 })();
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
 
 async function change_status() {
 	while (true) {
