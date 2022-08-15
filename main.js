@@ -298,9 +298,11 @@ client.on('messageCreate', async message => {
 		}
 
 	} catch (error) {
-		console.warn("=== ERROR ===");
-		console.warn("Error: " + error.message);
-		console.warn("Trace: " + error.stack);
+		if (error.message !== "Missing Permissions") {
+			console.warn("=== ERROR ===");
+			console.warn("Error: " + error.message);
+			console.warn("Trace: " + error.stack);
+		}
 	}
 });
 
