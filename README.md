@@ -30,3 +30,7 @@ This is our hub for all things Pronoun Bot. You can ask questions and get suppor
 The bot was programmed by [Aurillium](github.com/Aurillium) and the sentences were created by Lune.
 
 Happy pronouning everyone 🏳️‍⚧️!
+
+## Like my work?
+
+[!["Buy Me A Coffee"](https://cdn.buymeacoffee.com/buttons/v2/default-red.png)](https://www.buymeacoffee.com/aurillium)
