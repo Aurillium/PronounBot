@@ -183,9 +183,10 @@ client.on('messageCreate', async message => {
 						return;
 					}
 					args.random_pronouns = true;
-				}
-				for (const term of value.split(new RegExp("[, ]"))) {
-					raw_sets.push(term.trim());
+				} else {
+					for (const term of value.split(new RegExp("[, ]"))) {
+						raw_sets.push(term.trim());
+					}
 				}
 			} else if (key === "plural" || key === "pl") {
 				if (args.plural !== null && !plural_warned) {
