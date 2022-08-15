@@ -1,5 +1,5 @@
 # Pronoun Bot
-[![Discord Bots](https://top.gg/api/widget/servers/983907393823969312.svg)](https://top.gg/bot/983907393823969312) [![Discord Bots](https://top.gg/api/widget/upvotes/983907393823969312.svg)](https://top.gg/bot/983907393823969312) [!["Buy Me A Coffee"](https://cdn.buymeacoffee.com/buttons/v2/default-red.png)](https://www.buymeacoffee.com/aurillium)
+[![Discord Bots](https://top.gg/api/widget/servers/983907393823969312.svg)](https://top.gg/bot/983907393823969312) [![Discord Bots](https://top.gg/api/widget/upvotes/983907393823969312.svg)](https://top.gg/bot/983907393823969312)
 
 Pronoun Bot is a Discord bot for transgender, nonbinary, genderqueer, and any other gender-questioning people that can be used to try out new pronouns and names. It was written in Node.js
 
