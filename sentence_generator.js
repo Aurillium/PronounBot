@@ -1,7 +1,7 @@
 const SENTENCE_NUMBER = 3;
 
 exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural, db, response="Okay, how do these look?") {
-	var type;
+	let type;
 	if (subjective !== null) {
 		if (name !== null) {
 			if (plural) {
@@ -72,7 +72,7 @@ exports.make_all_pronouns = function(name, use_plural, db) {
 	let possessives = [];
 	let second_possessives = [];
 	let reflexives = [];
-	var statement;
+	let statement;
 	if (use_plural) {
 		statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets");
 	} else {
@@ -86,7 +86,7 @@ exports.make_all_pronouns = function(name, use_plural, db) {
 		reflexives.push(set.Reflexive);
 	}
 
-	var type;
+	let type;
 	if (name !== null) {
 		type = 0;
 	} else {
@@ -121,5 +121,74 @@ exports.make_all_pronouns = function(name, use_plural, db) {
 		sentence = random_replace(sentence, "[^reflexive^]", reflexives, text => text.toUpperCase());
 		response += "\n\n**Sentence " + (i + 1).toString() + ":**\n" + sentence;
 	}
-	return response
+	return response;
+}
+
+exports.make_one_command_sentences = function(sets, names, plural, db, response) {
+	if (sets.length === 0 && names.length === 0) {
+		return "Can't make sentences with no names or pronouns :(";
+	}
+	
+	let subjectives = [];
+	let objectives = [];
+	let possessives = [];
+	let second_possessives = [];
+	let reflexives = [];
+
+	for (const set of sets) {
+		subjectives.push(set[0]);
+		objectives.push(set[1]);
+		possessives.push(set[2]);
+		second_possessives.push(set[3]);
+		reflexives.push(set[4]);
+	}
+	
+	let type = null;
+	if (subjectives.length !== 0) {
+		if (names.length !== 0) {
+			if (plural) {
+				type = 2;
+			} else {
+				type = 0;
+			}
+		} else {
+			if (plural) {
+				type = 3;
+			} else {
+				type = 1;
+			}
+		}
+	} else {
+		type = 4;
+	}
+	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
+
+	for (let i = 0; i < SENTENCE_NUMBER; i++) {
+		let index = Math.floor(Math.random() * sentences.length);
+		let sentence = sentences.splice(index, 1)[0].Sentence;
+		
+		sentence = random_replace(sentence, "[name]", names, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
+		sentence = random_replace(sentence, "[^name]", names, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
+		sentence = random_replace(sentence, "[^name^]", names, text => text.toUpperCase());
+		
+		sentence = random_replace(sentence, "[subjective]", subjectives, text => text.toLowerCase());
+		sentence = random_replace(sentence, "[objective]", objectives, text => text.toLowerCase());
+		sentence = random_replace(sentence, "[possessive]", possessives, text => text.toLowerCase());
+		sentence = random_replace(sentence, "[possessive2]", second_possessives, text => text.toLowerCase());
+		sentence = random_replace(sentence, "[reflexive]", reflexives, text => text.toLowerCase());
+
+		sentence = random_replace(sentence, "[^subjective]", subjectives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
+		sentence = random_replace(sentence, "[^objective]", objectives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
+		sentence = random_replace(sentence, "[^possessive]", possessives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
+		sentence = random_replace(sentence, "[^possessive2]", second_possessives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
+		sentence = random_replace(sentence, "[^reflexive]", reflexives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
+
+		sentence = random_replace(sentence, "[^subjective^]", subjectives, text => text.toUpperCase());
+		sentence = random_replace(sentence, "[^objective^]", objectives, text => text.toUpperCase());
+		sentence = random_replace(sentence, "[^possessive^]", possessives, text => text.toUpperCase());
+		sentence = random_replace(sentence, "[^possessive2^]", second_possessives, text => text.toUpperCase());
+		sentence = random_replace(sentence, "[^reflexive^]", reflexives, text => text.toUpperCase());
+		response += "\n\n**Sentence " + (i + 1).toString() + ":**\n" + sentence;
+	}
+	return response;
 }

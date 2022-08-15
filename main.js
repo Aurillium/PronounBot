@@ -1,11 +1,12 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Client, Intents, MessageEmbed } = require('discord.js');
+const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode } = require('./config.json');
-const { message_embed, sleep } = require("./shared.js");
+const { message_embed, sleep, delete_row } = require("./shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
+const { make_sentences, make_one_command_sentences } = require('./sentence_generator');
 
 const db = openDB("./pronouns.db");
 
@@ -76,7 +77,7 @@ const registered = [];
 	}
 })();
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 async function change_status() {
 	while (true) {
@@ -125,6 +126,168 @@ client.on('interactionCreate', async interaction => {
 		} catch (error) {
 			await interaction.channel.send({embeds: [error_embed]});
 		}
+	}
+});
+
+client.on('messageCreate', async message => {
+	//if (!message.mentions.members.map(user => user.id).includes(client.user.id)) return;
+	if (message.content == null) return;
+	if (message.author.bot) return;
+
+	const deleter = new MessageActionRow()
+		.addComponents(
+			new MessageButton()
+				.setCustomId("delete_try:" + message.author.id)
+				.setLabel("Delete")
+				.setEmoji("🗑️")
+				.setStyle("DANGER"),
+		);
+
+	let raw_names = [];
+	let raw_terms = [];
+	let raw_sets = [];
+	let args = {names: [], sets: [], terms: [], plural: null, hidden: null, all_pronouns: false, no_pronouns: false, random_pronouns: false};
+	let plural_warned = false;
+	let hidden_warned = false;
+	for (const line of message.content.replaceAll(client.user.toString(), "").split("\n")) {
+		if (!line.includes(":")) continue;
+		[key, value] = line.split(":", 2);
+		key = key.trim().toLowerCase();
+		value = value.trim().toLowerCase();
+		if (key === "name" || key === "names" || key === "n") {
+			for (const name of value.split(new RegExp("[/,]"))) {
+				raw_names.push(name.trim());
+			}
+		} else if (key === "term" || key === "terms" || key === "t") {
+			for (const term of value.split(new RegExp("[/, ]"))) {
+				raw_terms.push(term.trim());
+			}
+		} else if (key === "pronouns" || key === "sets" || key === "set" || key === "p") {
+			if (value === "all" || value === "a") {
+				if (args.no_pronouns || args.random_pronouns) {
+					await message.reply({embeds: [message_embed("You can only specify all, no *or* random pronouns, not multiple.")], components: [deleter]});
+					return;
+				}
+				args.all_pronouns = true;
+			} else if (value === "none" || value === "no" || value === "n") {
+				if (args.all_pronouns || args.random_pronouns) {
+					await message.reply({embeds: [message_embed("You can only specify all, no *or* random pronouns, not multiple.")], components: [deleter]});
+					return;
+				}
+				args.no_pronouns = true;
+			} else if (value === "random" || value === "rand" || value === "r") {
+				if (args.all_pronouns || args.no_pronouns) {
+					await message.reply({embeds: [message_embed("You can only specify all, no *or* random pronouns, not multiple.")], components: [deleter]});
+					return;
+				}
+				args.random_pronouns = true;
+			}
+			for (const term of value.split(new RegExp("[, ]"))) {
+				raw_sets.push(term.trim());
+			}
+		} else if (key === "plural" || key === "pl") {
+			if (args.plural !== null && !plural_warned) {
+				await message.reply({embeds: [message_embed("Muliple 'plural' values detected. Please only use one.")], components: [deleter]});
+				return;
+			}
+			if (value === "y" || value === "yes" || value === "t" || value === "true") {
+				args.plural = true;
+			} else if (value === "n" || value === "no" || value === "f" || value === "false") {
+				args.plural = false;
+			} else {
+				await message.reply({embeds: [message_embed("Invalid 'plural' option detected. Only 'yes', 'no' , 'true', 'false', or their abbreviations are valid values.")], components: [deleter]});
+				return;
+			}
+		
+		// Not relevant as the command message is visible anyway and the command works in DMs
+
+		/*} else if (key === "hidden" || key === "h") {
+			if (args.hidden !== null && !hidden_warned) {
+				await message.reply({embeds: [message_embed("Muliple 'hidden' values detected. Please only use one.")], components: [deleter]});
+				return;
+			}
+			if (value === "y" || value === "yes" || value === "t" || value === "true") {
+				args.hidden = true;
+			} else if (value === "n" || value === "no" || value === "f" || value === "false") {
+				args.hidden = false;
+			} else {
+				await message.reply({embeds: [message_embed("Invalid 'hidden' option detected. Only 'yes', 'no' , 'true', 'false', or their abbreviations are valid values.")], components: [deleter]});
+				return;
+			}*/
+		} else {
+			await message.reply({embeds: [message_embed("Invalid key: '" + key + "'. It will be ignored.")], components: [deleter]});
+		}
+	}
+
+	for (const name of raw_names) {
+		if (name !== "" && !args.names.includes(name)) args.names.push(name);
+	}
+	for (const term of raw_terms) {
+		if (term !== "" && !args.terms.includes(term)) args.terms.push(term);
+	}
+	for (const raw_set of raw_sets) {
+		if (raw_set !== "") {
+			let split_set = raw_set.split("/");
+			let set = null;
+			if (split_set.length === 4) {
+				set = [split_set[0], split_set[1], split_set[2], split_set[2], split_set[3]];
+			} else if (split_set.length === 5) {
+				set = split_set;
+			} else {
+				await message.reply({embeds: [message_embed("Pronoun sets must have either four or five pronouns (check /help for more information): '" + raw_set + "'.")], components: [deleter]});
+			}
+			if (!args.sets.map(element => element.join("/")).includes(set.join("/"))) {
+				args.sets.push(set);
+			}
+		}
+	}
+
+	if (args.no_pronouns && args.sets.length !== 0) {
+		await message.reply({embeds: [message_embed("Cannot use no pronouns and specific sets at the same time.")], components: [deleter]});
+		return;
+	} else if (args.no_pronouns && args.sets.length !== 0) {
+		await message.reply({embeds: [message_embed("Cannot use a random pronoun set and specific sets at the same time.")], components: [deleter]});
+		return;
+	}
+
+	// ALL ERRORS SHOULD BE DEALT WITH BY HERE
+
+	const response_text = args.names.length === 0 ? "How do these look?" : "How do these look " + args.names[Math.floor(Math.random() * args.names.length)] + "?";
+
+	let statement;
+	if (args.all_pronouns || args.random_pronouns) {
+		if (args.plural) {
+			statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets");
+		} else {
+			statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets WHERE Plural=0");
+		}
+	}
+
+	let sentences = "";
+	if (args.no_pronouns) {
+		sentences = make_one_command_sentences([], args.names, args.plural, db, response_text);
+	} else if (args.all_pronouns) {
+		let sets = [];
+		for (const row of statement.all()) {
+			sets.push([row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive]);
+		}
+		sentences = make_one_command_sentences(sets.concat(args.sets), args.names, args.plural, db, response_text);
+	} else if (args.random_pronouns) {
+		let sets = [];
+		for (const row of statement.all()) {
+			sets.push([row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive]);
+		}
+		sentences = make_one_command_sentences([sets[Math.floor(Math.random() * sets.length)]], args.names, args.plural, db, response_text);
+	} else {
+		sentences = make_one_command_sentences(args.sets, args.names, args.plural, db, response_text);
+	}
+
+	// NOT HIDDEN FOR NOW
+	if (args.hidden && 0) {
+		const dm = await message.author.createDM();
+		await dm.send({content: "`" + JSON.stringify(args) + "`", components: [deleter]})
+	} else {
+		await message.reply({content: sentences, components: [deleter]});
 	}
 });
 
