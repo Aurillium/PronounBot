@@ -132,7 +132,7 @@ client.on('interactionCreate', async interaction => {
 client.on('messageCreate', async message => {
 	try {
 
-		if (message.mentions === null) {
+		if (message.mentions.members === null) {
 			if (message.content == null) return;
 		} else {
 			if (!message.mentions.members.map(user => user.id).includes(client.user.id)) return;
