@@ -227,19 +227,23 @@ client.on('messageCreate', async message => {
 		for (const term of raw_terms) {
 			if (term !== "" && !args.terms.includes(term)) args.terms.push(term);
 		}
-		for (const raw_set of raw_sets) {
-			if (raw_set !== "") {
-				let split_set = raw_set.split("/");
-				let set = null;
-				if (split_set.length === 4) {
-					set = [split_set[0], split_set[1], split_set[2], split_set[2], split_set[3]];
-				} else if (split_set.length === 5) {
-					set = split_set;
-				} else {
-					await message.reply({embeds: [message_embed("Pronoun sets must have either four or five pronouns (check /help for more information): '" + raw_set + "'.")], components: [deleter]});
-				}
-				if (!args.sets.map(element => element.join("/")).includes(set.join("/"))) {
-					args.sets.push(set);
+
+		if (!args.no_pronouns && !args.all_pronouns && !args.random_pronouns) {
+			for (const raw_set of raw_sets) {
+				if (raw_set !== "") {
+					let split_set = raw_set.split("/");
+					let set = null;
+					if (split_set.length === 4) {
+						set = [split_set[0], split_set[1], split_set[2], split_set[2], split_set[3]];
+					} else if (split_set.length === 5) {
+						set = split_set;
+					} else {
+						await message.reply({embeds: [message_embed("Pronoun sets must have either four or five pronouns (check /help for more information): '" + raw_set + "'.")], components: [deleter]});
+						return;
+					}
+					if (!args.sets.map(element => element.join("/")).includes(set.join("/"))) {
+						args.sets.push(set);
+					}
 				}
 			}
 		}
