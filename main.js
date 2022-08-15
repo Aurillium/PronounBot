@@ -251,7 +251,7 @@ client.on('messageCreate', async message => {
 		if (args.no_pronouns && args.sets.length !== 0) {
 			await message.reply({embeds: [message_embed("Cannot use no pronouns and specific sets at the same time.")], components: [deleter]});
 			return;
-		} else if (args.no_pronouns && args.sets.length !== 0) {
+		} else if (args.random_pronouns && args.sets.length !== 0) {
 			await message.reply({embeds: [message_embed("Cannot use a random pronoun set and specific sets at the same time.")], components: [deleter]});
 			return;
 		}
