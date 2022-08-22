@@ -80,11 +80,15 @@ const registered = [];
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 
 async function change_status() {
+	let delay = 1000 * 60 * 2;
+	if (testing_mode) {
+		delay = 1000 * 5;
+	}
 	while (true) {
 		client.user.setActivity('/help 🏳️‍🌈🏳️‍⚧️', { type: 'LISTENING' });
-		await sleep(1000 * 60 * 2);
+		await sleep(delay);
 		client.user.setActivity(client.guilds.cache.size.toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
-		await sleep(1000 * 60 * 2);
+		await sleep(delay);
 	}
 }
 
