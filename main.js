@@ -6,6 +6,7 @@ const { token, client_id, testing_guild, testing_mode, topgg_token } = require('
 const { message_embed, sleep, expand_set } = require("./shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
+const https = require('https');
 const { make_sentences, make_one_command_sentences } = require('./sentence_generator');
 
 const db = openDB("./pronouns.db");
