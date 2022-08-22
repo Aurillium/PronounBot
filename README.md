@@ -14,6 +14,15 @@ This bot uses slash commands and will tell you how to fill in the information it
 - Use `/try-noun` to try using a noun for pronouns
 - Use `/try-random` to let the bot pick a random set of pronouns for you
 
+Or, if that isn't for you, you can ping the bot then on each new line have a piece of information, kind of like this:
+> @Pronoun Bot
+> Name: (your name)
+> Pronouns: they/them/their/theirs/themself
+> Plural: (true/false)
+
+You can also abbreviate these keys, for example: `name` = `n`, `pronouns` = `p`, and `pl` = `plural`
+`True` and `false` can also be `t` and `f`. Use `/mention-help` to find out more about this!
+
 You can choose to specify a name or leave it blank if you're unsure, and you can specify whether the pronouns are plural or singular.
 
 The bot will generate some sentences for you so you can see if these pronouns are right for you!
