@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { token, client_id, testing_guild, testing_mode } = require('./config.json');
+const { token, client_id, testing_guild, testing_mode, topgg_token } = require('./config.json');
 const { message_embed, sleep } = require("./shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
@@ -83,8 +83,49 @@ async function change_status() {
 	while (true) {
 		client.user.setActivity('/help 🏳️‍🌈🏳️‍⚧️', { type: 'LISTENING' });
 		await sleep(1000 * 60 * 2);
-		//client.user.setActivity(client.guilds.cache.size.toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
+		client.user.setActivity(client.guilds.cache.size.toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
 		await sleep(1000 * 60 * 2);
+	}
+}
+
+async function update_topgg() {
+	let options = {
+		hostname: "top.gg",
+		port: 443,
+		path: "/api/bots/" + client.user.id + "/stats",
+		method: "POST",
+		headers: {
+			 'Authorization': topgg_token,
+			 'Content-Type': 'application/json'
+		   }
+	};
+	while (true) {
+		if (!testing_mode) {
+			console.log("UPLOADING STATS TO TOP.GG...");
+
+			let content = '{"server_count":' + client.guilds.cache.size.toString() + '}';
+			options.headers['Content-Length'] = content.length;
+
+			var req = https.request(options, (res) => {
+
+				console.log('Status:', res.statusCode);
+				console.log('Headers:', res.headers);
+			
+				console.log('Data:');
+				res.on('data', (d) => {
+					process.stdout.write(d);
+				});
+			});
+			
+			req.on('error', (e) => {
+				console.error(e);
+			});
+			
+			req.write(content);
+			req.end();
+			console.log("TOP.GG STATS UPLOADED.");
+		}
+		await sleep(1000 * 3600);
 	}
 }
 
@@ -92,6 +133,10 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 	change_status().catch(e => {
 		console.log("Status change failed:");
+		console.log(e);
+	});
+	update_topgg().catch(e => {
+		console.log("Top.gg update failed:");
 		console.log(e);
 	});
 });
