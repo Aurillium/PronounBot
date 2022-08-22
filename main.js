@@ -3,7 +3,7 @@ const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = requi
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode, topgg_token } = require('./config.json');
-const { message_embed, sleep } = require("./shared.js");
+const { message_embed, sleep, expand_set } = require("./shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
 const { make_sentences, make_one_command_sentences } = require('./sentence_generator');
@@ -284,13 +284,8 @@ client.on('messageCreate', async message => {
 		if (!args.no_pronouns && !args.all_pronouns && !args.random_pronouns) {
 			for (const raw_set of raw_sets) {
 				if (raw_set !== "") {
-					let split_set = raw_set.split("/");
-					let set = null;
-					if (split_set.length === 4) {
-						set = [split_set[0], split_set[1], split_set[2], split_set[2], split_set[3]];
-					} else if (split_set.length === 5) {
-						set = split_set;
-					} else {
+					let set = expand_set(raw_set.split("/"));
+					if (set === null) {
 						await message.reply({embeds: [message_embed("Pronoun sets must have either four or five pronouns (check /help for more information): '" + raw_set + "'.")], components: [deleter]});
 						return;
 					}
