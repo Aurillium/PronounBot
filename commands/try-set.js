@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
-const { delete_row } = require("../shared.js");
+const { delete_row, expand_set } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-set")
@@ -26,28 +26,15 @@ exports.data = new SlashCommandBuilder()
 	);
 
 exports.response = async function(interaction, db) {
-	let set = interaction.options.getString("set").split("/");
-	var subjective, objective, possessive, second_possessive, reflexive;
-	if (set.length == 4) {
-		subjective = set[0];
-		objective = set[1];
-		possessive = set[2];
-		second_possessive = set[2];
-		reflexive = set[3];
-	} else if (set.length == 5) {
-		subjective = set[0];
-		objective = set[1];
-		possessive = set[2];
-		second_possessive = set[3];
-		reflexive = set[4];
-	} else {
+	let set = expand_set(interaction.options.getString("set").split("/"));
+	if (set === null) {
 		interaction.reply({content: "Make sure your pronouns are in the form 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive' (`/help` for more information)", ephemeral: true});
 		return;
 	}
 	let name = interaction.options.getString("name");
 	let plural = interaction.options.getBoolean("plural") ?? false;
 	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: make_sentences(set[0], set[1], set[2], set[3], set[4], name, plural, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of pronouns in the form of 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive', then optionally add a name and tell the bot if the pronouns are plural.`;
