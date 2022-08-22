@@ -16,8 +16,11 @@ This bot uses slash commands and will tell you how to fill in the information it
 
 Or, if that isn't for you, you can ping the bot then on each new line have a piece of information, kind of like this:
 > @Pronoun Bot
+> 
 > Name: (your name)
+> 
 > Pronouns: they/them/their/theirs/themself
+> 
 > Plural: (true/false)
 
 You can also abbreviate these keys, for example: `name` = `n`, `pronouns` = `p`, and `pl` = `plural`
