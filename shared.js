@@ -49,3 +49,6 @@ exports.expand_set = function(raw_set) {
 		return null;
 	}
 }
+
+exports.pronoun_length_error = exports.message_embed("Due to Discord limitations, we can't support pronouns longer than 20 characters");
+exports.name_length_error = exports.message_embed("Due to Discord limitations, we can't support names longer than 50 characters");

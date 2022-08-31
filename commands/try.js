@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
-const { delete_row } = require("../shared.js");
+const { delete_row, name_length_error, pronoun_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try")
@@ -46,14 +46,22 @@ exports.data = new SlashCommandBuilder()
 	);
 
 exports.response = async function(interaction, db) {
-	let subjective = interaction.options.getString("subjective");
-	let objective = interaction.options.getString("objective");
-	let possessive = interaction.options.getString("possessive");
-	let reflexive = interaction.options.getString("reflexive");
-	let second_possessive = interaction.options.getString("second_possessive") ?? possessive;
-	let name = interaction.options.getString("name");
-	let plural = interaction.options.getBoolean("plural") ?? false;
-	let hidden = interaction.options.getBoolean("hidden") ?? false;
+	const subjective = interaction.options.getString("subjective");
+	const objective = interaction.options.getString("objective");
+	const possessive = interaction.options.getString("possessive");
+	const reflexive = interaction.options.getString("reflexive");
+	const second_possessive = interaction.options.getString("second_possessive") ?? possessive;
+	if (subjective.length > 20 || objective.length > 20 || possessive.length > 20 || second_possessive.length > 20 || reflexive.length > 20) {
+		await interaction.reply({ephemeral: true, embeds: [pronoun_length_error]});
+		return;
+	}
+	const name = interaction.options.getString("name");
+	if (name.length > 50) {
+		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		return;
+	}
+	const plural = interaction.options.getBoolean("plural") ?? false;
+	const hidden = interaction.options.getBoolean("hidden") ?? false;
 	await interaction.reply({content: make_sentences(subjective, objective, possessive, second_possessive, reflexive, name, plural, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 

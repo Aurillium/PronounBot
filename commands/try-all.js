@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_all_pronouns } = require("../sentence_generator.js");
-const { delete_row } = require("../shared.js");
+const { delete_row, name_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-all")
@@ -16,8 +16,13 @@ exports.data = new SlashCommandBuilder()
 	);
 
 exports.response = async function(interaction, db) {
-	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: make_all_pronouns(interaction.options.getString("name"), false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	const name = interaction.options.getString("name");
+	if (name.length > 50) {
+		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		return;
+	}
+	const hidden = interaction.options.getBoolean("hidden") ?? false;
+	await interaction.reply({content: make_all_pronouns(name, false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out using all pronouns. Just optionally enter a name and the bot will give you some example sentences.`;

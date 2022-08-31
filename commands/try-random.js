@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
-const { delete_row } = require("../shared.js");
+const { delete_row, name_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-random")
@@ -21,9 +21,13 @@ exports.data = new SlashCommandBuilder()
 	);
 
 exports.response = async function(interaction, db) {
-	let name = interaction.options.getString("name");
-	let plural = interaction.options.getBoolean("plural") ?? false;
-	let hidden = interaction.options.getBoolean("hidden") ?? false;
+	const name = interaction.options.getString("name");
+	if (name.length > 50) {
+		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		return;
+	}
+	const plural = interaction.options.getBoolean("plural") ?? false;
+	const hidden = interaction.options.getBoolean("hidden") ?? false;
 	if (plural) {
 		statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets");
 	} else {

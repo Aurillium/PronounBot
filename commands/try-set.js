@@ -31,9 +31,17 @@ exports.response = async function(interaction, db) {
 		interaction.reply({content: "Make sure your pronouns are in the form 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive' (`/help` for more information)", ephemeral: true});
 		return;
 	}
-	let name = interaction.options.getString("name");
-	let plural = interaction.options.getBoolean("plural") ?? false;
-	let hidden = interaction.options.getBoolean("hidden") ?? false;
+	if (set[0].length > 20 || set[1].length > 20 || set[2].length > 20 || set[3].length > 20 || set[4].length > 20) {
+		await interaction.reply({ephemeral: true, embeds: [pronoun_length_error]});
+		return;
+	}
+	const name = interaction.options.getString("name");
+	if (name.length > 50) {
+		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		return;
+	}
+	const plural = interaction.options.getBoolean("plural") ?? false;
+	const hidden = interaction.options.getBoolean("hidden") ?? false;
 	await interaction.reply({content: make_sentences(set[0], set[1], set[2], set[3], set[4], name, plural, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 

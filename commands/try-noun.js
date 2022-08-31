@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
-const { delete_row } = require("../shared.js");
+const { delete_row, name_length_error, pronoun_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-noun")
@@ -21,9 +21,18 @@ exports.data = new SlashCommandBuilder()
 	);
 
 exports.response = async function(interaction, db) {
-	let noun = interaction.options.getString("noun");
-	let hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", interaction.options.getString("name"), false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	const noun = interaction.options.getString("noun");
+	const name = interaction.options.getString("name");
+	if (noun.length > 20) {
+		await interaction.reply({ephemeral: true, embeds: [pronoun_length_error]});
+		return;
+	}
+	if (name.length > 50) {
+		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		return;
+	}
+	const hidden = interaction.options.getBoolean("hidden") ?? false;
+	await interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", name, false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;
