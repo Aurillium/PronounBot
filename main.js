@@ -183,7 +183,6 @@ client.on('interactionCreate', async interaction => {
 
 client.on('messageCreate', async message => {
 	try {
-
 		if (message.mentions.members === null) {
 			if (message.content == null) return;
 		} else {
@@ -205,10 +204,10 @@ client.on('messageCreate', async message => {
 		let raw_sets = [];
 		let args = {names: [], sets: [], terms: [], plural: null, hidden: null, all_pronouns: false, no_pronouns: false, random_pronouns: false};
 		let plural_warned = false;
-		let hidden_warned = false;
+		//let hidden_warned = false;
 		for (const line of message.content.replaceAll(client.user.toString(), "").split("\n")) {
 			if (!line.includes(":")) continue;
-			[key, value] = line.split(":", 2);
+			let [key, value] = line.split(":", 2);
 			key = key.trim().toLowerCase();
 			value = value.trim().toLowerCase();
 			if (key === "name" || key === "names" || key === "n") {
