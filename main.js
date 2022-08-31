@@ -308,7 +308,8 @@ client.on('messageCreate', async message => {
 
 		// ALL ERRORS SHOULD BE DEALT WITH BY HERE
 
-		const response_text = args.names.length === 0 ? "How do these look?" : "How do these look " + args.names[Math.floor(Math.random() * args.names.length)] + "?";
+		const response_name = args.names[Math.floor(Math.random() * args.names.length)]
+		const response_text = args.names.length === 0 ? "How do these look?" : "How do these look " + response_name[0].toUpperCase() + response_name.substring(1).toLowerCase() + "?";
 
 		let statement;
 		if (args.all_pronouns || args.random_pronouns) {
