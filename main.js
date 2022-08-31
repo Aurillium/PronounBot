@@ -1,3 +1,5 @@
+"use strict";
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { REST } = require('@discordjs/rest');

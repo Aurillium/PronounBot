@@ -1,3 +1,5 @@
+"use strict";
+
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
 exports.sleep = ms => new Promise(r => setTimeout(r, ms));

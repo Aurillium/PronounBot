@@ -1,3 +1,5 @@
+"use strict";
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
 const { delete_row, name_length_error, pronoun_length_error } = require("../shared.js");

@@ -1,3 +1,5 @@
+"use strict";
+
 const SENTENCE_NUMBER = 3;
 
 exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural, db, response="Okay, how do these look?") {
