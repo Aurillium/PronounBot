@@ -19,7 +19,7 @@ exports.data = new SlashCommandBuilder()
 
 exports.response = async function(interaction, db) {
 	const name = interaction.options.getString("name");
-	if (name.length > 50) {
+	if (name !== null && name.length > 50) {
 		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
 		return;
 	}
