@@ -22,7 +22,7 @@ exports.message_embed = function(description, colour="#FF0000") {
 exports.expand_set = function(raw_set) {
 	const he_him = ["he", "him", "his", "his", "himself"];
 	const she_her = ["she", "her", "her", "hers", "herself"];
-	const they_them = ["they", "them", "their", "their", "themself"];
+	const they_them = ["they", "them", "their", "theirs", "themself"];
 	if (raw_set.length === 1) {
 		if (raw_set[0] === "he") {
 			return he_him;
