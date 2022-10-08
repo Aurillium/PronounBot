@@ -11,6 +11,10 @@ const fs = require('node:fs');
 const https = require('https');
 const { make_sentences, make_one_command_sentences } = require('./sentence_generator');
 
+require('console-stamp')(console, { 
+    format: ':date(dd/mm/yy HH:MM:ss)' 
+});
+
 const db = openDB("./pronouns.db");
 
 const commands = [];
