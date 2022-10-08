@@ -114,14 +114,14 @@ async function update_topgg() {
 			options.headers['Content-Length'] = content.length;
 
 			var req = https.request(options, (res) => {
-
 				console.log('Status:', res.statusCode);
-				console.log('Headers:', res.headers);
-			
-				console.log('Data:');
-				res.on('data', (d) => {
-					process.stdout.write(d);
-				});
+				if (res.statusCode !== 200) {
+					console.log('Headers:', res.headers);
+					console.log('Data:');
+					res.on('data', (d) => {
+						process.stdout.write(d);
+					});
+				}
 			});
 			
 			req.on('error', (e) => {
