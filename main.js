@@ -15,6 +15,8 @@ require('console-stamp')(console, {
     format: ':date(dd/mm/yy HH:MM:ss)' 
 });
 
+var exitting = false;
+
 const db = openDB("./pronouns.db");
 
 const commands = [];
@@ -92,9 +94,13 @@ async function change_status() {
 		delay = 1000 * 5;
 	}
 	while (true) {
-		client.user.setActivity('/help 🏳️‍🌈🏳️‍⚧️', { type: 'LISTENING' });
+		if (!exitting) {
+			client.user.setActivity('/help 🏳️‍🌈🏳️‍⚧️', { type: 'LISTENING' });
+		}
 		await sleep(delay);
-		client.user.setActivity(client.guilds.cache.size.toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
+		if (!exitting) {
+			client.user.setActivity(client.guilds.cache.size.toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
+		}
 		await sleep(delay);
 	}
 }
@@ -361,7 +367,10 @@ client.on('messageCreate', async message => {
 });
 
 async function onExit() {
+	exitting = true;
 	console.log("\nExitting...");
+	client.user.setActivity('Restarting... 🏳️‍🌈🏳️‍⚧️', { type: 'PLAYING' });
+	client.user.setStatus('idle');
 	if (testing_mode) {
 		let guild = await client.guilds.fetch(testing_guild);
 		for (let i = 0; i < registered.length; i++) {
