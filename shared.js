@@ -44,7 +44,7 @@ exports.expand_set = function(raw_set) {
 			return null;
 		}
 	} else if (raw_set.length === 3) {
-		return [raw_set[0], raw_set[1], raw_set[2], raw_set[2], raw_set[1]]
+		return [raw_set[0], raw_set[1], raw_set[2], raw_set[2], raw_set[1] + "self"]
 	} else if (raw_set.length === 4) {
 		return [raw_set[0], raw_set[1], raw_set[2], raw_set[2], raw_set[3]];
 	} else if (raw_set.length === 5) {
