@@ -2,7 +2,7 @@
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { make_sentences } = require("../sentence_generator.js");
-const { delete_row, expand_set } = require("../shared.js");
+const { delete_row, expand_set, pronoun_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-set")
