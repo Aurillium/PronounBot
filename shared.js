@@ -1,7 +1,7 @@
 "use strict";
 
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { database } = require("config.json");
+const { database } = require("./config.json");
 const crypto = require('crypto');
 
 const db_salt = Buffer.from(database.salt, "hex")
