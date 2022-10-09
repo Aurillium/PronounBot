@@ -1,6 +1,10 @@
 "use strict";
 
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { database } = require("config.json");
+const crypto = require('crypto');
+
+const db_salt = Buffer.from(database.salt, "hex")
 
 exports.sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -19,9 +23,13 @@ exports.message_embed = function(description, colour="#FF0000") {
 		.setDescription(description);
 }
 
+exports.hash = function(content) {
+	return crypto.createHash('sha256').update(content).update(db_salt).digest();
+}
+
 function second_possessive(possessive) {
 	const last_letter = possessive[possessive.length - 1];
-	var possessive2;
+	let possessive2;
 	if (last_letter === "s" || last_letter === "z") {
 		possessive2 = possessive;
 	} else {
