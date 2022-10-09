@@ -15,7 +15,7 @@ require('console-stamp')(console, {
     format: ':date(dd/mm/yy HH:MM:ss)' 
 });
 
-var exitting = false;
+let exitting = false;
 
 const db = openDB("./pronouns.db");
 
@@ -31,7 +31,7 @@ for (const file of button_files) {
 	button_responses[file.slice(0, -3)] = require("./buttons/" + file).response;
 }
 
-var commandsEmbed = new MessageEmbed()
+let commandsEmbed = new MessageEmbed()
 	.setColor("#FF8758")
 	.setTitle("Command List")
 	.setDescription("Here's a list of commands for Pronouns Bot:\n(Required arguments look like `<this>` and optional ones look like `[this]`)")
@@ -123,7 +123,7 @@ async function update_topgg() {
 			let content = '{"server_count":' + client.guilds.cache.size.toString() + '}';
 			options.headers['Content-Length'] = content.length;
 
-			var req = https.request(options, (res) => {
+			let req = https.request(options, (res) => {
 				console.log('Status:', res.statusCode);
 				if (res.statusCode !== 200) {
 					console.log('Headers:', res.headers);
@@ -178,7 +178,7 @@ client.on('interactionCreate', async interaction => {
 		console.warn("=== ERROR ===");
 		console.warn("Error: " + error.message);
 		console.warn("Trace: " + error.stack);
-		var error_embed = new MessageEmbed()
+		let error_embed = new MessageEmbed()
 			.setColor("#FF0000")
 			.setTitle("Oops!")
 			.setAuthor(author)
