@@ -172,9 +172,7 @@ const piece = /(?:{(.*?)\|(.*?)}( ?))?\[([^\u200B].*?)\](?:( ?\S*){(.*?)\|(.*?)}
 function genderify_text(text, sets, names) {
 	let result;
 	while ((result = piece.exec(text)) !== null) {
-		console.log(result);
 		let central = result[4];
-		console.log(central);
 		let capitals = 0; // None
 		let form_before = "";
 		let form_after = "";
@@ -187,12 +185,9 @@ function genderify_text(text, sets, names) {
 			central = central.substring(0, central.length - 1);
 		}
 
-		console.log(names);
-
 		if (central === "name") {
 			// It's a name!
 			central = names[Math.floor(Math.random() * names.length)];
-			console.log(central);
 			if (capitals === 0) {
 				capitals = 1; // Capitalise names
 			}
