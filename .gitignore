@@ -7,9 +7,9 @@ package-lock.json
 
 # Other files
 icon.jpeg
-pronouns.db
-migrate.py
-add_sets.py
+
+# Scripts
+scripts/**
 
 # Notes
 NOTES.txt
