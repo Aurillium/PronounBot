@@ -5,8 +5,8 @@ config.json
 node_modules/
 package-lock.json
 
-# Other files
-icon.jpeg
+# Icons
+icons/**
 
 # Scripts
 scripts/**
