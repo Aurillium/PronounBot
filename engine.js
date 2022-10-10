@@ -24,7 +24,7 @@ exports.expand_set = function(raw_set) {
 	let plural_str = "";
 	let plural = null;
 	if (colon_index !== -1) {
-		plural_str = raw_set.substring(colon_index + 1);
+		plural_str = raw_set.substring(colon_index + 1).toLowerCase();
 		if (plural_str === "p" || plural_str === "pl" || plural_str === "plural") {
 			plural = true;
 		} else if (plural_str === "s" || plural_str === "singular") {
