@@ -1,8 +1,8 @@
 "use strict";
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { make_sentences } = require("../sentence_generator.js");
-const { delete_row, expand_set, pronoun_length_error } = require("../shared.js");
+const { make_sentences, expand_set } = require("../engine.js");
+const { delete_row, pronoun_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
 	.setName("try-set")
@@ -28,7 +28,7 @@ exports.data = new SlashCommandBuilder()
 	);
 
 exports.response = async function(interaction, db) {
-	let set = expand_set(interaction.options.getString("set").split("/"));
+	let set = expand_set(interaction.options.getString("set"));
 	if (set === null) {
 		interaction.reply({content: "Make sure your pronouns are in the form 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive' (`/help` for more information)", ephemeral: true});
 		return;

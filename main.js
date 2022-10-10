@@ -4,14 +4,16 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { token, client_id, testing_guild, testing_mode, topgg_token } = require('./config.json');
-const { message_embed, sleep, expand_set } = require("./shared.js");
+const { token, client_id, testing_guild, testing_mode, topgg_token, database } = require('./config.json');
+const { message_embed, sleep } = require("./shared.js");
 const openDB = require('better-sqlite3');
 const fs = require('node:fs');
 const https = require('https');
-const { make_sentences, make_one_command_sentences } = require('./sentence_generator');
+const mysql = require('mysql');
+const util = require('util');
+const { make_one_command_sentences, expand_set } = require('./engine.js');
 
-require('console-stamp')(console, { 
+require('console-stamp')(console, {
     format: ':date(dd/mm/yy HH:MM:ss)' 
 });
 
@@ -296,7 +298,7 @@ client.on('messageCreate', async message => {
 		if (!args.no_pronouns && !args.all_pronouns && !args.random_pronouns) {
 			for (const raw_set of raw_sets) {
 				if (raw_set !== "") {
-					let set = expand_set(raw_set.split("/"));
+					let set = expand_set(raw_set);
 					if (set === null) {
 						await message.reply({embeds: [message_embed("Pronoun sets must have either four or five pronouns (check /help for more information): '" + raw_set + "'.")], components: [deleter]});
 						return;
@@ -371,6 +373,7 @@ async function onExit() {
 	console.log("\nExitting...");
 	client.user.setActivity('Restarting... 🏳️‍🌈🏳️‍⚧️', { type: 'PLAYING' });
 	client.user.setStatus('idle');
+	db.end();
 	if (testing_mode) {
 		let guild = await client.guilds.fetch(testing_guild);
 		for (let i = 0; i < registered.length; i++) {
