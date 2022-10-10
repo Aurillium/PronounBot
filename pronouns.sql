@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS Sentences (
 );
 CREATE TABLE IF NOT EXISTS Servers (
     ID          INTEGER     NOT NULL AUTO_INCREMENT,
-    DiscordID   BINARY(32)  NOT NULL UNIQUE,        -- Store identifiers in a hash so even if someone manages an SQL injection they won't be able identify the owner
+    DiscordID   BINARY(32)  NOT NULL UNIQUE,        -- Store identifiers in a hash so even if someone manages an SQL injection (they shouldn't) they won't be able identify the owner
     Announce    BIGINT,
     PRIMARY KEY(ID)
 );
