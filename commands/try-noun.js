@@ -1,7 +1,7 @@
 "use strict";
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { make_sentences } = require("../engine.js");
+const { generate_sentences } = require("../engine.js");
 const { delete_row, name_length_error, pronoun_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
@@ -9,7 +9,7 @@ exports.data = new SlashCommandBuilder()
 	.setDescription("Try noun pronouns!")
 	.addStringOption(option =>
 		option.setName("noun")
-			.setDescription("The noun to base the pronouns off of.")
+			.setDescription("The noun to base the pronouns on.")
 			.setRequired(true)
 	)
 	.addStringOption(option =>
@@ -34,7 +34,7 @@ exports.response = async function(interaction, db) {
 		return;
 	}
 	const hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: make_sentences(noun, noun, noun + "'s", noun + "'s", noun + "self", name, false, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: generate_sentences([[noun, noun, noun + "'s", noun + "'s", noun + "self", false]], [name], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;

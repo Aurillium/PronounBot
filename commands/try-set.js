@@ -1,7 +1,7 @@
 "use strict";
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { make_sentences, expand_set } = require("../engine.js");
+const { generate_sentences, expand_set } = require("../engine.js");
 const { delete_row, pronoun_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
@@ -44,7 +44,7 @@ exports.response = async function(interaction, db) {
 	}
 	const plural = interaction.options.getBoolean("plural") ?? false;
 	const hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: make_sentences(set[0], set[1], set[2], set[3], set[4], name, plural, db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: generate_sentences([[set[0], set[1], set[2], set[3], set[4], plural]], [name], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of pronouns in the form of 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive', then optionally add a name and tell the bot if the pronouns are plural.`;

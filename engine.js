@@ -125,143 +125,39 @@ exports.make_sentences = function(subjective, objective, possessive, second_poss
 	return response;
 }
 
-function random_replace(text, old, new_list, processing, replacement=true) {
-	let new_list_copy = [...new_list];
-	while (text.includes(old)) {
-		let index = Math.floor(Math.random() * new_list_copy.length);
-		let chosen = new_list_copy[index];
-		if (!replacement) {
-			new_list_copy.splice(index, 1);
-		}
-		text = text.replace(old, processing(chosen));
-	}
-	return text;
-}
-
-exports.make_all_pronouns = function(name, use_plural, db) {
-	let subjectives = [];
-	let objectives = [];
-	let possessives = [];
-	let second_possessives = [];
-	let reflexives = [];
-	let statement;
-	if (use_plural) {
-		statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets");
-	} else {
-		statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets WHERE Plural=0");
-	}
-	for (const set of statement.iterate()) {
-		subjectives.push(set.Subjective);
-		objectives.push(set.Objective);
-		possessives.push(set.Possessive);
-		second_possessives.push(set.Possessive2);
-		reflexives.push(set.Reflexive);
-	}
-
-	let type;
-	if (name !== null) {
-		type = 0;
-	} else {
-		type = 1;
-	}
-	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
-
-	name ??= "";
-	let response = "Okay, how do these look?";
-	for (let i = 0; i < SENTENCE_NUMBER; i++) {
-		let index = Math.floor(Math.random() * sentences.length);
-		let sentence = sentences.splice(index, 1)[0].Sentence
-			.replaceAll("[name]", name)
-			.replaceAll("[^name]", name)
-			.replaceAll("[^name^]", name.toUpperCase());
-		sentence = random_replace(sentence, "[subjective]", subjectives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[objective]", objectives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[possessive]", possessives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[possessive2]", second_possessives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[reflexive]", reflexives, text => text.toLowerCase());
-
-		sentence = random_replace(sentence, "[^subjective]", subjectives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^objective]", objectives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^possessive]", possessives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^possessive2]", second_possessives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^reflexive]", reflexives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-
-		sentence = random_replace(sentence, "[^subjective^]", subjectives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^objective^]", objectives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^possessive^]", possessives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^possessive2^]", second_possessives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^reflexive^]", reflexives, text => text.toUpperCase());
-		response += "\n\n**Sentence " + (i + 1).toString() + ":**\n" + sentence;
-	}
-	return response;
-}
-
-exports.make_one_command_sentences = function(sets, names, plural, db, response) {
+exports.generate_sentences = function(sets, names, db, before="Okay, how do these look?", after="") {
 	if (sets.length === 0 && names.length === 0) {
+		// I think this is pretty self-explanatory
 		return "Can't make sentences with no names or pronouns :(";
 	}
-	
-	let subjectives = [];
-	let objectives = [];
-	let possessives = [];
-	let second_possessives = [];
-	let reflexives = [];
 
-	for (const set of sets) {
-		subjectives.push(set[0]);
-		objectives.push(set[1]);
-		possessives.push(set[2]);
-		second_possessives.push(set[3]);
-		reflexives.push(set[4]);
-	}
+	// The before text goes *before* the sentences ^-^
+	let response = before;
 	
 	let type = null;
 	if (subjectives.length !== 0) {
 		if (names.length !== 0) {
-			if (plural) {
-				type = 2;
-			} else {
-				type = 0;
-			}
+			type = 0; // Names, pronouns
 		} else {
-			if (plural) {
-				type = 3;
-			} else {
-				type = 1;
-			}
+			type = 1; // No names, pronouns
 		}
 	} else {
-		type = 4;
+		type = 2; // Names, no pronouns
 	}
+	// *Grabby hands* gimme
 	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
 
+	// Add them all to the message and then process
 	for (let i = 0; i < SENTENCE_NUMBER; i++) {
 		let index = Math.floor(Math.random() * sentences.length);
 		let sentence = sentences.splice(index, 1)[0].Sentence;
-		
-		sentence = random_replace(sentence, "[name]", names, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^name]", names, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^name^]", names, text => text.toUpperCase());
-		
-		sentence = random_replace(sentence, "[subjective]", subjectives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[objective]", objectives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[possessive]", possessives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[possessive2]", second_possessives, text => text.toLowerCase());
-		sentence = random_replace(sentence, "[reflexive]", reflexives, text => text.toLowerCase());
-
-		sentence = random_replace(sentence, "[^subjective]", subjectives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^objective]", objectives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^possessive]", possessives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^possessive2]", second_possessives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-		sentence = random_replace(sentence, "[^reflexive]", reflexives, text => text[0].toUpperCase() + text.substring(1).toLowerCase());
-
-		sentence = random_replace(sentence, "[^subjective^]", subjectives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^objective^]", objectives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^possessive^]", possessives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^possessive2^]", second_possessives, text => text.toUpperCase());
-		sentence = random_replace(sentence, "[^reflexive^]", reflexives, text => text.toUpperCase());
 		response += "\n\n**Sentence " + (i + 1).toString() + ":**\n" + sentence;
 	}
+	// Don't exlude the after text from processing!
+	response += after;
+
+	response = genderify_text(response, names, sets);
+
 	return response;
 }
 
@@ -273,7 +169,7 @@ exports.make_one_command_sentences = function(sets, names, plural, db, response)
 const piece = /(?:{(.*?)\|(.*?)}( ?))?\[([^\u200B].*?)\](?:( ?\S*){(.*?)\|(.*?)})?/;
 // Returns: [whole, singular, plural, gap, pronoun, gap, singular, plural] because even I won't be able to understand this in two days
 
-function new_parser(text, names, sets) {
+function genderify_text(text, sets, names) {
 	let result;
 	while ((result = piece.exec(text)) !== null) {
 		let central = result[4];
