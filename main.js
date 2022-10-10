@@ -11,7 +11,7 @@ const fs = require('node:fs');
 const https = require('https');
 const mysql = require('mysql');
 const util = require('util');
-const { make_one_command_sentences, expand_set } = require('./engine.js');
+const { generate_sentences, expand_set } = require('./engine.js');
 
 require('console-stamp')(console, {
     format: ':date(dd/mm/yy HH:MM:ss)' 
@@ -19,7 +19,17 @@ require('console-stamp')(console, {
 
 let exitting = false;
 
-const db = openDB("./pronouns.db");
+const db = mysql.createConnection({
+	host: database.address,
+	user: database.username,
+	port: database.port,
+	password: database.password,
+	database: database.database
+});
+const query = util.promisify(db.query).bind(db);
+db.async_query = query;
+
+//const db = openDB("./pronouns.db");
 
 const commands = [];
 const command_responses = {};
@@ -320,35 +330,30 @@ client.on('messageCreate', async message => {
 
 		// ALL ERRORS SHOULD BE DEALT WITH BY HERE
 
-		const response_name = args.names[Math.floor(Math.random() * args.names.length)]
-		const response_text = args.names.length === 0 ? "How do these look?" : "How do these look " + response_name[0].toUpperCase() + response_name.substring(1).toLowerCase() + "?";
+		const response_text = args.names.length === 0 ? "How do these look?" : "How do these look [name]?";
 
-		let statement;
+		let result;
 		if (args.all_pronouns || args.random_pronouns) {
-			if (args.plural) {
-				statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets");
-			} else {
-				statement = db.prepare("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive FROM Sets WHERE Plural=0");
-			}
+			result = await db.async_query("SELECT Subjective, Objective, Possessive, Possessive2, Reflexive, Plural FROM Sets");
 		}
 
 		let sentences = "";
 		if (args.no_pronouns) {
-			sentences = make_one_command_sentences([], args.names, args.plural, db, response_text);
+			sentences = await generate_sentences([], args.names, db, response_text);
 		} else if (args.all_pronouns) {
 			let sets = [];
-			for (const row of statement.all()) {
-				sets.push([row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive]);
+			for (const row of result) {
+				sets.push([row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive, row.Plural]);
 			}
-			sentences = make_one_command_sentences(sets.concat(args.sets), args.names, args.plural, db, response_text);
+			sentences = await generate_sentences(sets.concat(args.sets), args.names, db, response_text);
 		} else if (args.random_pronouns) {
 			let sets = [];
-			for (const row of statement.all()) {
-				sets.push([row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive]);
+			for (const row of result) {
+				sets.push([row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive, row.Plural]);
 			}
-			sentences = make_one_command_sentences([sets[Math.floor(Math.random() * sets.length)]], args.names, args.plural, db, response_text);
+			sentences = await generate_sentences([sets[Math.floor(Math.random() * sets.length)]], args.names, db, "The set I chose was **[subjective]/[objective]/[possessive]/[possessive2]/[reflexive]**:");
 		} else {
-			sentences = make_one_command_sentences(args.sets, args.names, args.plural, db, response_text);
+			sentences = await generate_sentences(args.sets, args.names, db, response_text);
 		}
 
 		// NOT HIDDEN FOR NOW
