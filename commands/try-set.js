@@ -16,8 +16,7 @@ exports.data = new SlashCommandBuilder()
 		option.setName("name")
 			.setDescription("The name you'd like to try (optional).")
 			.setRequired(false)
-	)
-	.addBooleanOption(option =>
+	).addBooleanOption(option =>
 		option.setName("plural")
 			.setDescription("Whether the pronoun set is plural or singular (default singular).")
 			.setRequired(false)
@@ -42,9 +41,9 @@ exports.response = async function(interaction, db) {
 		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
 		return;
 	}
-	const plural = interaction.options.getBoolean("plural") ?? false;
+	const plural = interaction.options.getBoolean("plural") ?? set[5];
 	const hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: generate_sentences([[set[0], set[1], set[2], set[3], set[4], plural]], [name], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: await generate_sentences([[set[0], set[1], set[2], set[3], set[4], plural]], name ? [name] : [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of pronouns in the form of 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive', then optionally add a name and tell the bot if the pronouns are plural.`;

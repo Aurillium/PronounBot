@@ -34,7 +34,7 @@ exports.response = async function(interaction, db) {
 		return;
 	}
 	const hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: generate_sentences([[noun, noun, noun + "'s", noun + "'s", noun + "self", false]], [name], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: await generate_sentences([[noun, noun, noun + "'s", noun + "'s", noun + "self", false]], name ? [name]: [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
 exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;
