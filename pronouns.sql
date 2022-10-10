@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS Sets (
     Possessive2 VARCHAR(20) NOT NULL,
     Reflexive   VARCHAR(20) NOT NULL,
     Plural      BOOLEAN     NOT NULL,
+    Listed      BOOLEAN     NOT NULL,
     PRIMARY KEY(ID)
 );
 CREATE TABLE IF NOT EXISTS Sentences (
