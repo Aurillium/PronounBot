@@ -100,7 +100,7 @@ exports.generate_sentences = async function(sets, names, db, before="Okay, how d
 		let sentence = sentences.splice(index, 1)[0].Sentence;
 		response += "\n\n**Sentence " + (i + 1).toString() + ":**\n" + sentence;
 	}
-	// Don't exlude the after text from processing!
+	// Don't exclude the after text from processing!
 	response += after;
 
 	response = genderify_text(response, sets, names);
