@@ -72,59 +72,6 @@ exports.expand_set = function(raw_set) {
 	}
 }
 
-exports.make_sentences = function(subjective, objective, possessive, second_possessive, reflexive, name, plural, db, response="Okay, how do these look?") {
-	let type;
-	if (subjective !== null) {
-		if (name !== null) {
-			if (plural) {
-				type = 2;
-			} else {
-				type = 0;
-			}
-		} else {
-			if (plural) {
-				type = 3;
-			} else {
-				type = 1;
-			}
-		}
-	} else {
-		type = 4;
-	}
-	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
-
-    name ??= "";
-	for (let i = 0; i < SENTENCE_NUMBER; i++) {
-		let index = Math.floor(Math.random() * sentences.length);
-		let sentence = sentences.splice(index, 1)[0].Sentence
-			.replaceAll("[name]", name)
-			.replaceAll("[^name]", name)
-			.replaceAll("[^name^]", name.toUpperCase());
-		if (subjective !== null) {
-			sentence = sentence
-				.replaceAll("[subjective]", subjective.toLowerCase())
-				.replaceAll("[objective]", objective.toLowerCase())
-				.replaceAll("[possessive]", possessive.toLowerCase())
-				.replaceAll("[possessive2]", second_possessive.toLowerCase())
-				.replaceAll("[reflexive]", reflexive.toLowerCase())
-
-				.replaceAll("[^subjective]", subjective[0].toUpperCase() + subjective.substring(1).toLowerCase())
-				.replaceAll("[^objective]", objective[0].toUpperCase() + objective.substring(1).toLowerCase())
-				.replaceAll("[^possessive]", possessive[0].toUpperCase() + possessive.substring(1).toLowerCase())
-				.replaceAll("[^possessive2]", second_possessive[0].toUpperCase() + second_possessive.substring(1).toLowerCase())
-				.replaceAll("[^reflexive]", reflexive[0].toUpperCase() + reflexive.substring(1).toLowerCase())
-
-				.replaceAll("[^subjective^]", subjective.toUpperCase())
-				.replaceAll("[^objective^]", objective.toUpperCase())
-				.replaceAll("[^possessive^]", possessive.toUpperCase())
-				.replaceAll("[^possessive2^]", second_possessive.toUpperCase())
-				.replaceAll("[^reflexive^]", reflexive.toUpperCase());
-		}
-		response += "\n\n**Sentence " + (i + 1).toString() + ":**\n" + sentence;
-	}
-	return response;
-}
-
 exports.generate_sentences = async function(sets, names, db, before="Okay, how do these look?", after="") {
 	if (sets.length === 0 && names.length === 0) {
 		// I think this is pretty self-explanatory
@@ -166,7 +113,7 @@ exports.generate_sentences = async function(sets, names, db, before="Okay, how d
 // Zero-width space is the escape character to prevent matches on user input
 // All instances of it get removed at the end but it's invisible so no one will
 // notice it's gone if they added one to their input anyway
-const piece = /(?:{(.*?)\|(.*?)}( ?))?\[([^\u200B].*?)\](?:( ?\S*){(.*?)\|(.*?)})?/;
+const piece = /(?:{(.*?)\|(.*?)}( ?))?\[([^\u200B].*?)\](?:( ?\S* ?){(.*?)\|(.*?)})?/;
 // Returns: [whole, singular, plural, gap, pronoun, gap, singular, plural] because even I won't be able to understand this in two days
 
 function genderify_text(text, sets, names) {
