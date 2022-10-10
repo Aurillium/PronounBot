@@ -1,7 +1,7 @@
 "use strict";
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { make_sentences, generate_sentences } = require("../engine.js");
+const { generate_sentences } = require("../engine.js");
 const { delete_row, name_length_error, pronoun_length_error } = require("../shared.js");
 
 exports.data = new SlashCommandBuilder()
