@@ -208,7 +208,7 @@ function genderify_text(text, sets, names) {
 				central = set[4];
 			}
 
-			if (set[5] === true) {
+			if (set[5]) {
 				// Plural set
 				form_before = result[2];
 				form_after = result[7];
