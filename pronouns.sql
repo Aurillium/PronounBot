@@ -17,11 +17,11 @@ CREATE TABLE IF NOT EXISTS UserSets (
 );
 CREATE TABLE IF NOT EXISTS Sets (
     ID          INTEGER     NOT NULL AUTO_INCREMENT,
-    Subjective  VARCHAR(20) NOT NULL,
-    Objective   VARCHAR(20) NOT NULL,
-    Possessive  VARCHAR(20) NOT NULL,
-    Possessive2 VARCHAR(20) NOT NULL,
-    Reflexive   VARCHAR(20) NOT NULL,
+    Subjective  VARCHAR(10) NOT NULL,
+    Objective   VARCHAR(10) NOT NULL,
+    Possessive  VARCHAR(10) NOT NULL,
+    Possessive2 VARCHAR(10) NOT NULL,
+    Reflexive   VARCHAR(10) NOT NULL,
     Plural      BOOLEAN     NOT NULL,
     Listed      BOOLEAN     NOT NULL,
     PRIMARY KEY(ID)
