@@ -125,7 +125,7 @@ exports.make_sentences = function(subjective, objective, possessive, second_poss
 	return response;
 }
 
-exports.generate_sentences = function(sets, names, db, before="Okay, how do these look?", after="") {
+exports.generate_sentences = async function(sets, names, db, before="Okay, how do these look?", after="") {
 	if (sets.length === 0 && names.length === 0) {
 		// I think this is pretty self-explanatory
 		return "Can't make sentences with no names or pronouns :(";
@@ -135,7 +135,7 @@ exports.generate_sentences = function(sets, names, db, before="Okay, how do thes
 	let response = before;
 	
 	let type = null;
-	if (subjectives.length !== 0) {
+	if (sets.length !== 0) {
 		if (names.length !== 0) {
 			type = 0; // Names, pronouns
 		} else {
@@ -145,7 +145,7 @@ exports.generate_sentences = function(sets, names, db, before="Okay, how do thes
 		type = 2; // Names, no pronouns
 	}
 	// *Grabby hands* gimme
-	let sentences = db.prepare("SELECT Sentence FROM Sentences WHERE Type=?").all(type);
+	let sentences = await db.async_query("SELECT Sentence FROM Sentences WHERE Type=?", type);
 
 	// Add them all to the message and then process
 	for (let i = 0; i < SENTENCE_NUMBER; i++) {
@@ -156,7 +156,7 @@ exports.generate_sentences = function(sets, names, db, before="Okay, how do thes
 	// Don't exlude the after text from processing!
 	response += after;
 
-	response = genderify_text(response, names, sets);
+	response = genderify_text(response, sets, names);
 
 	return response;
 }
@@ -172,7 +172,9 @@ const piece = /(?:{(.*?)\|(.*?)}( ?))?\[([^\u200B].*?)\](?:( ?\S*){(.*?)\|(.*?)}
 function genderify_text(text, sets, names) {
 	let result;
 	while ((result = piece.exec(text)) !== null) {
+		console.log(result);
 		let central = result[4];
+		console.log(central);
 		let capitals = 0; // None
 		let form_before = "";
 		let form_after = "";
@@ -185,9 +187,12 @@ function genderify_text(text, sets, names) {
 			central = central.substring(0, central.length - 1);
 		}
 
+		console.log(names);
+
 		if (central === "name") {
 			// It's a name!
 			central = names[Math.floor(Math.random() * names.length)];
+			console.log(central);
 			if (capitals === 0) {
 				capitals = 1; // Capitalise names
 			}
@@ -242,7 +247,3 @@ function genderify_text(text, sets, names) {
 	text.replaceAll("\u200B", "");
 	return text;
 }
-
-
-//let platypus = "Curse you Perry the platypus! What? What do you mean [possessive] name isn't Perry? It's [name]? Well why {isn't|aren't} [subjective] telling me this [reflexive]? [^possessive] friend needed to talk to [objective]? Alright, I can understand that. Curse you [name] the platypus!";
-console.log(new_parser(platypus, ["Memphis", "M"], [["he", "him", "his", "his", "himself", false], ["they", "them", "their", "theirs", "themself", true]]));
