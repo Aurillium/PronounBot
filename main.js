@@ -1,7 +1,7 @@
 "use strict";
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton, Options } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token, client_id, testing_guild, testing_mode, topgg_token, database } = require('./config.json');
@@ -14,7 +14,7 @@ const util = require('util');
 const { generate_sentences, expand_set } = require('./engine.js');
 
 require('console-stamp')(console, {
-    format: ':date(dd/mm/yy HH:MM:ss)' 
+    format: testing_mode ? ':date(dd/mm/yy HH:MM:ss.l)' : ':date(dd/mm/yy HH:MM:ss)' 
 });
 
 let exitting = false;
@@ -28,8 +28,6 @@ const db = mysql.createConnection({
 });
 const query = util.promisify(db.query).bind(db);
 db.async_query = query;
-
-//const db = openDB("./pronouns.db");
 
 const commands = [];
 const command_responses = {};
@@ -98,7 +96,30 @@ const registered = [];
 	}
 })();
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
+const client = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES],
+	partials: ["CHANNEL"],
+	makeCache: Options.cacheWithLimits({
+		...Options.DefaultMakeCacheSettings,
+		ReactionManager: 0,
+		GuildMemberManager: {
+			maxSize: 1,
+			keepOverLimit: member => member.id === client.user.id
+		},
+		GuildMessageManager: {
+			maxSize: 1,
+			keepOverLimit: message => message.author.id === client.user.id
+		},
+		UserManager: {
+			maxSize: 1,
+			keepOverLimit: user => user.id === client.user.id
+		},
+		MessageManager: {
+			maxSize: 1,
+			keepOverLimit: message => message.author.id === client.user.id
+		},
+	})
+});
 
 async function change_status() {
 	let delay = 1000 * 60 * 2;
@@ -172,9 +193,11 @@ client.on('ready', () => {
 
 client.on('interactionCreate', async interaction => {
 	try {
+		let initial = performance.now();
 		if (interaction.isCommand()) {
 			if (interaction.commandName in command_responses) {
 				await command_responses[interaction.commandName](interaction, db);
+				console.log(interaction.commandName + " took " + (performance.now() - initial).toString() + "ms");
 			} else {
 				await interaction.reply({embeds: [message_embed("That command isn't loaded in this version!", "#FF0000")]})
 			}
@@ -182,6 +205,7 @@ client.on('interactionCreate', async interaction => {
 			const [handler_name, ...rest] = interaction.customId.split(":");
 			if (handler_name in button_responses) {
 				await button_responses[handler_name](interaction, rest.join(":"), db);
+				console.log(interaction.customId + " took " + (performance.now() - initial).toString() + "ms");
 			} else {
 				await interaction.reply({embeds: [message_embed(`That button isn't loaded in this version!\nCustom ID: "${interaction.customId}"`, "#FF0000")]})
 			}
