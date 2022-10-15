@@ -113,7 +113,7 @@ exports.generate_sentences = async function(sets, names, db, before="Okay, how d
 // Zero-width space is the escape character to prevent matches on user input
 // All instances of it get removed at the end but it's invisible so no one will
 // notice it's gone if they added one to their input anyway
-const piece = /(?:{(.*?)\|(.*?)}( ?))?\[([^\u200B].*?)\](?:( ?\S* ?){(.*?)\|(.*?)})?/;
+const piece = /(?:{(.*?)\|(.*?)}( ?))?\[([^\u200B].*?)\](?:( ?\S*? ?){(.*?)\|(.*?)})?/;
 // Returns: [whole, singular, plural, gap, pronoun, gap, singular, plural] because even I won't be able to understand this in two days
 
 function genderify_text(text, sets, names) {
