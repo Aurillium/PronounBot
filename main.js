@@ -161,15 +161,11 @@ async function update_topgg() {
 				if (res.statusCode !== 200) {
 					console.log('Headers:', res.headers);
 					console.log('Data:');
-					res.on('data', (d) => {
-						process.stdout.write(d);
-					});
+					res.on('data', process.stdout.write);
 				}
 			});
 			
-			req.on('error', (e) => {
-				console.error(e);
-			});
+			req.on('error', console.log);
 			
 			req.write(content);
 			req.end();
