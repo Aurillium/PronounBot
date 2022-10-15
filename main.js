@@ -151,8 +151,6 @@ async function update_topgg() {
 	};
 	while (true) {
 		if (!testing_mode) {
-			console.log("UPLOADING STATS TO TOP.GG...");
-
 			let content = '{"server_count":' + client.guilds.cache.size.toString() + '}';
 			options.headers['Content-Length'] = content.length;
 
