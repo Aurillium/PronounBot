@@ -13,3 +13,6 @@ scripts/**
 
 # Notes
 NOTES.txt
+
+# Node logs
+isolate-*-*-v8.log
