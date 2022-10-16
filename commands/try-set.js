@@ -29,7 +29,7 @@ exports.data = new SlashCommandBuilder()
 exports.response = async function(interaction, db) {
 	let set = expand_set(interaction.options.getString("set"));
 	if (set === null) {
-		interaction.reply({content: "Make sure your pronouns are in the form 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive' (`/help` for more information)", ephemeral: true});
+		await interaction.reply({content: "Make sure your pronouns are in the form 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive' (`/help` for more information)", ephemeral: true});
 		return;
 	}
 	if (set[0].length > 20 || set[1].length > 20 || set[2].length > 20 || set[3].length > 20 || set[4].length > 20) {
