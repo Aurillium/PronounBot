@@ -17,5 +17,6 @@ exports.data = new SlashCommandBuilder()
 
 exports.response = async function(interaction, db) {
     const channel = interaction.options.getChannel("channel");
-    await channel.send("Announcement channel is set!");
+    //await channel.send("Announcement channel is set!");
+	await interaction.reply("This command is yet to be implemented...")
 }
