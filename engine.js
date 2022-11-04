@@ -30,6 +30,7 @@ exports.expand_set = function(raw_set) {
 		} else if (plural_str === "s" || plural_str === "singular") {
 			plural = false;
 		}
+		// Maybe use a regex to make sure there's no backslash before it? Also this doesn't work for some reason
 		raw_set = raw_set.substring(0, colon_index);
 	}
 	let list_set = raw_set.split("/");
