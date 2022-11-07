@@ -6,6 +6,7 @@ const { token, testing_mode, testing_guild, topgg_token } = require("./config.js
 const { stamp_console, client_id } = require('./shared');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
+const https = require('https');
 const fs = require('node:fs');
 
 stamp_console('MAIN');
