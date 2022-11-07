@@ -1,10 +1,12 @@
 "use strict";
 
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { database, testing_mode } = require("./config.json");
+const { database, testing_mode, token } = require("./config.json");
 const crypto = require('crypto');
 
-const db_salt = Buffer.from(database.salt, "hex")
+const db_salt = Buffer.from(database.salt, "hex");
+
+exports.client_id = Buffer.from(token.split(".")[0], "base64url").toString();
 
 exports.sleep = ms => new Promise(r => setTimeout(r, ms));
 
