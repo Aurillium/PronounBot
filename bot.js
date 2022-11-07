@@ -83,9 +83,9 @@ command_responses["commands"] = async function(interaction) {
 }
 
 async function change_status() {
-	let delay = 1000 * 60 * 2;
+	let delay = 1000 * 60;
 	if (testing_mode) {
-		delay = 1000 * 5;
+		delay = 1000 * 4;
 	}
 	while (true) {
 		if (!exitting) {
@@ -94,6 +94,10 @@ async function change_status() {
 		await sleep(delay);
 		if (!exitting) {
 			client.user.setActivity((await server_count(client)).toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
+		}
+		await sleep(delay);
+		if (!exitting) {
+			client.user.setActivity("shard #" + client.shard_id + " 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
 		}
 		await sleep(delay);
 	}
