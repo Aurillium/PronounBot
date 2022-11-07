@@ -28,7 +28,7 @@ exports.hash = function(content) {
 }
 
 exports.server_count = async function(client) {
-	let results = await client.shard.fetchClientValues('guilds.cache.size')
+	let results = await client.shard.fetchClientValues('guilds.cache.size');
 	return results.reduce((acc, guildCount) => acc + guildCount, 0);
 }
 
