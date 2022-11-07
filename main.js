@@ -96,6 +96,11 @@ manager.on("shardCreate", shard => {
 	});
 });
 
+// Make sure we have some shards to test
+if (testing_mode) {
+	manager.totalShards = 2;
+}
+
 // When all shards are up
 manager.spawn().then(shards => {
 	if (!testing_mode) {
