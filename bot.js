@@ -90,15 +90,15 @@ async function change_status() {
 	while (true) {
 		if (!exitting) {
 			client.user.setActivity('/help 🏳️‍🌈🏳️‍⚧️', { type: 'LISTENING' });
-		}
+		} else break;
 		await sleep(delay);
 		if (!exitting) {
 			client.user.setActivity((await server_count(client)).toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
-		}
+		} else break;
 		await sleep(delay);
 		if (!exitting) {
 			client.user.setActivity("shard #" + client.shard_id + " 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
-		}
+		} else break;
 		await sleep(delay);
 	}
 }
