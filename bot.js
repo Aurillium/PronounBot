@@ -357,7 +357,7 @@ async function onExit() {
 	console.log("Exitting...");
 	client.user.setActivity('Restarting... 🏳️‍🌈🏳️‍⚧️', { type: 'PLAYING' });
 	client.user.setStatus('idle');
-	db.end();
+	//db.end();
 	console.log("Shard ready to exit.");
 	// Sleep to allow the shard manager to catch up and send the exit message
 	await sleep(500);
