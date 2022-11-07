@@ -2,8 +2,8 @@
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ShardingManager } = require('discord.js');
-const { token, testing_mode, client_id, testing_guild } = require("./config.json");
-const { stamp_console } = require('./shared');
+const { token, testing_mode, testing_guild } = require("./config.json");
+const { stamp_console, client_id } = require('./shared');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const fs = require('node:fs');
@@ -52,7 +52,7 @@ async function update_topgg() {
 	let options = {
 		hostname: "top.gg",
 		port: 443,
-		path: "/api/bots/" + client.user.id + "/stats",
+		path: "/api/bots/" + client_id + "/stats",
 		method: "POST",
 		headers: {
 			 'Authorization': topgg_token,
