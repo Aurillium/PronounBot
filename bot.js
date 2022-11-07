@@ -4,7 +4,6 @@ const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton, Options 
 const { token, testing_mode, topgg_token, database } = require('./config.json');
 const { message_embed, sleep, server_count, stamp_console } = require("./shared.js");
 const fs = require('node:fs');
-const https = require('https');
 const mysql = require('mysql');
 const util = require('util');
 const { generate_sentences, expand_set } = require('./engine.js');
