@@ -125,9 +125,11 @@ async function onExit() {
 
 process.on("SIGINT", () => {
 	onExit().then(() => {
+		console.log("Bot exited.");
 		process.exit();
 	}).catch(error => {
 		console.log(error);
+		console.log("Bot exited with errors.");
 		process.exit();
 	});
 });

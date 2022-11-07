@@ -358,6 +358,7 @@ async function onExit() {
 	client.user.setActivity('Restarting... 🏳️‍🌈🏳️‍⚧️', { type: 'PLAYING' });
 	client.user.setStatus('idle');
 	db.end();
+	console.log("Shard ready to exit.");
 	// Sleep to allow the shard manager to catch up and send the exit message
 	await sleep(500);
 	if (full_exit) {
@@ -372,9 +373,11 @@ async function onExit() {
 
 process.on("SIGINT", () => {
 	onExit().then(() => {
+		console.log("Shard exited.");
 		process.exit();
 	}).catch(error => {
 		console.log(error);
+		console.log("Shard exited with errors.");
 		process.exit();
 	});
 });
