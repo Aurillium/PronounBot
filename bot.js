@@ -1,7 +1,7 @@
 "use strict";
 
 const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton, Options } = require('discord.js');
-const { token, testing_mode, topgg_token, database } = require('./config.json');
+const { token, testing_mode, database } = require('./config.json');
 const { message_embed, sleep, server_count, stamp_console } = require("./shared.js");
 const fs = require('node:fs');
 const mysql = require('mysql');
