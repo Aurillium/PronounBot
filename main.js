@@ -2,7 +2,7 @@
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ShardingManager } = require('discord.js');
-const { token, testing_mode, testing_guild } = require("./config.json");
+const { token, testing_mode, testing_guild, topgg_token } = require("./config.json");
 const { stamp_console, client_id } = require('./shared');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
