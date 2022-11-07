@@ -48,6 +48,41 @@ const registered = [];
 	}
 })();
 
+async function update_topgg() {
+	let options = {
+		hostname: "top.gg",
+		port: 443,
+		path: "/api/bots/" + client.user.id + "/stats",
+		method: "POST",
+		headers: {
+			 'Authorization': topgg_token,
+			 'Content-Type': 'application/json'
+		   }
+	};
+	while (true) {
+		let servers = (await manager.fetchClientValues("guilds.cache.size")).reduce((acc, guildCount) => acc + guildCount, 0);
+		let content = '{"server_count":' + servers.toString() + '}';
+		options.headers['Content-Length'] = content.length;
+
+		let req = https.request(options, (res) => {
+			console.log('Status:', res.statusCode);
+			if (res.statusCode !== 200) {
+				console.log('Headers:', res.headers);
+				console.log('Data:');
+				res.on('data', process.stdout.write);
+			}
+		});
+		
+		req.on('error', console.log);
+		
+		req.write(content);
+		req.end();
+		console.log("TOP.GG STATS UPLOADED.");
+
+		await sleep(1000 * 3600);
+	}
+}
+
 const manager = new ShardingManager('./bot.js', {
 	token: token
 });
@@ -61,7 +96,15 @@ manager.on("shardCreate", shard => {
 	});
 });
 
-manager.spawn();
+// When all shards are up
+manager.spawn().then(shards => {
+	if (!testing_mode) {
+		update_topgg().catch(e => {
+			console.log("Top.gg update failed:");
+			console.log(e);
+		});
+	}
+});
 
 async function onExit() {
 	for (const [i, shard] of manager.shards) {

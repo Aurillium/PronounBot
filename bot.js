@@ -100,48 +100,9 @@ async function change_status() {
 	}
 }
 
-async function update_topgg() {
-	let options = {
-		hostname: "top.gg",
-		port: 443,
-		path: "/api/bots/" + client.user.id + "/stats",
-		method: "POST",
-		headers: {
-			 'Authorization': topgg_token,
-			 'Content-Type': 'application/json'
-		   }
-	};
-	while (true) {
-		if (!testing_mode) {
-			let content = '{"server_count":' + (await server_count(client)).toString() + '}';
-			options.headers['Content-Length'] = content.length;
-
-			let req = https.request(options, (res) => {
-				console.log('Status:', res.statusCode);
-				if (res.statusCode !== 200) {
-					console.log('Headers:', res.headers);
-					console.log('Data:');
-					res.on('data', process.stdout.write);
-				}
-			});
-			
-			req.on('error', console.log);
-			
-			req.write(content);
-			req.end();
-			console.log("TOP.GG STATS UPLOADED.");
-		}
-		await sleep(1000 * 3600);
-	}
-}
-
 client.on('ready', () => {
 	change_status().catch(e => {
 		console.log("Status change failed:");
-		console.log(e);
-	});
-	update_topgg().catch(e => {
-		console.log("Top.gg update failed:");
 		console.log(e);
 	});
 });
