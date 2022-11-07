@@ -1,100 +1,13 @@
 "use strict";
 
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton, Options, ApplicationCommandOptionType } = require('discord.js');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
-const { token, client_id, testing_guild, testing_mode, topgg_token, database } = require('./config.json');
-const { message_embed, sleep } = require("./shared.js");
-const openDB = require('better-sqlite3');
+const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton, Options } = require('discord.js');
+const { token, testing_mode, topgg_token, database } = require('./config.json');
+const { message_embed, sleep, server_count, stamp_console } = require("./shared.js");
 const fs = require('node:fs');
 const https = require('https');
 const mysql = require('mysql');
 const util = require('util');
 const { generate_sentences, expand_set } = require('./engine.js');
-
-require('console-stamp')(console, {
-    format: testing_mode ? ':date(dd/mm/yy HH:MM:ss.l)' : ':date(dd/mm/yy HH:MM:ss)' 
-});
-
-let exitting = false;
-
-const db = mysql.createConnection({
-	host: database.address,
-	user: database.username,
-	port: database.port,
-	password: database.password,
-	database: database.database
-});
-const query = util.promisify(db.query).bind(db);
-db.async_query = query;
-
-const commands = [];
-const command_responses = {};
-const button_responses = {};
-const button_files = fs.readdirSync('./buttons').filter(file => file.endsWith('.js'));
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-const author = { name: "Aurillium", iconURL: "https://avatars.githubusercontent.com/u/57483028", url: "https://github.com/Aurillium" };
-
-for (const file of button_files) {
-	button_responses[file.slice(0, -3)] = require("./buttons/" + file).response;
-}
-
-let commandsEmbed = new MessageEmbed()
-	.setColor("#FF8758")
-	.setTitle("Command List")
-	.setDescription("Here's a list of commands for Pronouns Bot:\n(Required arguments look like `<this>` and optional ones look like `[this]`)")
-	.setAuthor(author);
-
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	commands.push(command.data.toJSON());
-	command_responses[command.data.name] = command.response;
-
-	let command_string = "/" + command.data.name;
-	command.data.options.forEach(option => {
-		let j = option.toJSON();
-		if (j.required) {
-			command_string += " <" + option.toJSON().name + ">";
-		} else {
-			command_string += " [" + option.toJSON().name + "]";
-		}
-	});
-	commandsEmbed = commandsEmbed.addField(command.data.name, command.doc + "\n**Usage:** `" + command_string + "`\n** **");
-}
-commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
-command_responses["commands"] = async function(interaction) {
-	await interaction.reply({embeds: [commandsEmbed]});
-}
-
-const rest = new REST({ version: '9' }).setToken(token);
-const registered = [];
-
-(async () => {
-	try {
-		console.log('Started refreshing slash commands.');
-
-		if (testing_mode) {
-			let registered_commands = await rest.put(	
-				Routes.applicationGuildCommands(client_id, testing_guild),
-				{ body: commands },
-			);
-			registered_commands.forEach(command => {
-				registered.push(command.id);
-			});
-		} else {
-			await rest.put(
-				Routes.applicationCommands(client_id),
-				{ body: commands },
-			);
-		}
-
-		console.log('Successfully reloaded slash commands.');
-	} catch (error) {
-		console.error(error);
-	}
-})();
 
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES],
@@ -121,6 +34,55 @@ const client = new Client({
 	})
 });
 
+let exitting = false;
+let full_exit = false;
+
+const db = mysql.createConnection({
+	host: database.address,
+	user: database.username,
+	port: database.port,
+	password: database.password,
+	database: database.database
+});
+const query = util.promisify(db.query).bind(db);
+db.async_query = query;
+
+const command_responses = {};
+const button_responses = {};
+const button_files = fs.readdirSync('./buttons').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+const author = { name: "Aurillium", iconURL: "https://avatars.githubusercontent.com/u/57483028", url: "https://github.com/Aurillium" };
+
+for (const file of button_files) {
+	button_responses[file.slice(0, -3)] = require("./buttons/" + file).response;
+}
+
+let commandsEmbed = new MessageEmbed()
+	.setColor("#FF8758")
+	.setTitle("Command List")
+	.setDescription("Here's a list of commands for Pronouns Bot:\n(Required arguments look like `<this>` and optional ones look like `[this]`)")
+	.setAuthor(author);
+
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	command_responses[command.data.name] = command.response;
+
+	let command_string = "/" + command.data.name;
+	command.data.options.forEach(option => {
+		let j = option.toJSON();
+		if (j.required) {
+			command_string += " <" + option.toJSON().name + ">";
+		} else {
+			command_string += " [" + option.toJSON().name + "]";
+		}
+	});
+	commandsEmbed = commandsEmbed.addField(command.data.name, command.doc + "\n**Usage:** `" + command_string + "`\n** **");
+}
+command_responses["commands"] = async function(interaction) {
+	await interaction.reply({embeds: [commandsEmbed]});
+}
+
 async function change_status() {
 	let delay = 1000 * 60 * 2;
 	if (testing_mode) {
@@ -132,16 +94,13 @@ async function change_status() {
 		}
 		await sleep(delay);
 		if (!exitting) {
-			// Fix with sharding
-			//client.user.setActivity(client.guilds.cache.size.toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
+			client.user.setActivity((await server_count(client)).toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
 		}
 		await sleep(delay);
 	}
 }
 
 async function update_topgg() {
-	// Fix with sharding
-	return;
 	let options = {
 		hostname: "top.gg",
 		port: 443,
@@ -154,7 +113,7 @@ async function update_topgg() {
 	};
 	while (true) {
 		if (!testing_mode) {
-			let content = '{"server_count":' + client.guilds.cache.size.toString() + '}';
+			let content = '{"server_count":' + (await server_count(client)).toString() + '}';
 			options.headers['Content-Length'] = content.length;
 
 			let req = https.request(options, (res) => {
@@ -177,7 +136,6 @@ async function update_topgg() {
 }
 
 client.on('ready', () => {
-	console.log(`Logged in as ${client.user.tag}!`);
 	change_status().catch(e => {
 		console.log("Status change failed:");
 		console.log(e);
@@ -414,28 +372,42 @@ client.on('messageCreate', async message => {
 	}
 });
 
+process.on("message", message => {
+    if (!message.type) return false;
+
+    if (message.type == "shard_id") {
+		// When the shard logs in, the manager sends it its ID
+		// for its console stamp
+		stamp_console('SHARD ' + message.data.toString());
+		client.shard_id = message.data;
+        console.log(`Logged in as ${client.user.tag}!`);
+    } else if (message.type == "exit") {
+		// On a controlled exit we should get a message telling us
+		// to hang until the manager exits
+		full_exit = true;
+	}
+});
+
 async function onExit() {
 	exitting = true;
-	console.log("\nExitting...");
+	console.log("Exitting...");
 	client.user.setActivity('Restarting... 🏳️‍🌈🏳️‍⚧️', { type: 'PLAYING' });
 	client.user.setStatus('idle');
 	db.end();
-	if (testing_mode) {
-		let guild = await client.guilds.fetch(testing_guild);
-		for (let i = 0; i < registered.length; i++) {
-			const id = registered[i];
-			let command = await guild.commands.fetch(id);
-			await command.delete();
-			console.log(`- Unregistered '${command.name}'.`);
-		}
-		console.log("Unregistered all commands; Exitting now.");
-	} else {
-		console.log("Production mode does not unregister commands; Exitting now.");
+	// Sleep to allow the shard manager to catch up and send the exit message
+	await sleep(500);
+	if (full_exit) {
+		// Wait forever until the process disconnects, then finish exitting
+		// This prevents the shard being respawned
+		await new Promise(r=>{process.on("disconnect",()=>{r();})});
+		// This is a scuffed line but all it does is registers an event handler
+		// for the process disconnecting that resolves the promise, ending the
+		// await and allowing us to proceed with exitting cleanly
 	}
 }
 
 process.on("SIGINT", () => {
-	onExit().then(result => {
+	onExit().then(() => {
 		process.exit();
 	}).catch(error => {
 		console.log(error);
