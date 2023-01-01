@@ -76,7 +76,10 @@ for (const file of commandFiles) {
 			command_string += " [" + option.toJSON().name + "]";
 		}
 	});
-	commandsEmbed = commandsEmbed.addField(command.data.name, command.doc + "\n**Usage:** `" + command_string + "`\n** **");
+	commandsEmbed = commandsEmbed.addFields({
+		name: command.data.name,
+		value: command.doc + "\n**Usage:** `" + command_string + "`\n** **"
+	});
 }
 command_responses["commands"] = async function(interaction) {
 	await interaction.reply({embeds: [commandsEmbed]});
