@@ -202,10 +202,18 @@ client.on('messageCreate', async message => {
 			value = value.trim().toLowerCase();
 			if (key === "name" || key === "names" || key === "n") {
 				for (const name of value.split(new RegExp("[/,]"))) {
+					if (name.length > 50) {
+						await message.reply({embeds: [message_embed("Names must be at most 50 characters in length.")]});
+						return;
+					}
 					raw_names.push(name.trim());
 				}
 			} else if (key === "term" || key === "terms" || key === "t") {
 				for (const term of value.split(new RegExp("[/, ]"))) {
+					if (term.length > 50) {
+						await message.reply({embeds: [message_embed("Terms must be at most 50 characters in length.")]});
+						return;
+					}
 					raw_terms.push(term.trim());
 				}
 			} else if (key === "pronouns" || key === "sets" || key === "set" || key === "p") {
@@ -228,8 +236,8 @@ client.on('messageCreate', async message => {
 					}
 					args.random_pronouns = true;
 				} else {
-					for (const term of value.split(new RegExp("[, ]"))) {
-						raw_sets.push(term.trim());
+					for (const set of value.split(new RegExp("[, ]"))) {
+						raw_sets.push(set.trim());
 					}
 				}
 			} else if (key === "plural" || key === "pl") {
@@ -280,6 +288,12 @@ client.on('messageCreate', async message => {
 					if (set === null) {
 						await message.reply({embeds: [message_embed("Pronoun sets must have either four or five pronouns (check /help for more information): '" + raw_set + "'.")], components: [deleter]});
 						return;
+					}
+					for (const pronoun of set) {
+						if (pronoun.length > 20) {
+							await message.reply({embeds: [message_embed("Pronouns must be at most 20 characters in length.")]});
+							return;
+						}
 					}
 					if (!args.sets.map(element => element.join("/")).includes(set.join("/"))) {
 						args.sets.push(set);
