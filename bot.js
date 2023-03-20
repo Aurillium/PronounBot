@@ -333,14 +333,16 @@ client.on('messageCreate', async message => {
 		}
 
 	} catch (error) {
-		if (error.message !== "Missing Permissions") {
-			console.warn("=== ERROR ===");
-			console.warn("Error: " + error.message);
-			console.warn("Command Content: " + message.content);
-			// Maybe later add the parsed parameters?
-			console.warn("Trace: " + error.stack);
-			// Inform user as well
+		if (error.message === "Missing Permissions") {
+			return; // Nothing we can do
 		}
+
+		console.warn("=== ERROR ===");
+		console.warn("Error: " + error.message);
+		console.warn("Command Content: " + message.content);
+		// Maybe later add the parsed parameters?
+		console.warn("Trace: " + error.stack);
+		// Inform user as well
 	}
 });
 
