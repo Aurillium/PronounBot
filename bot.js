@@ -161,7 +161,12 @@ client.on('interactionCreate', async interaction => {
 		try {
 			await interaction.reply({embeds: [error_embed]});
 		} catch (error) {
-			await interaction.channel.send({embeds: [error_embed]});
+			try {
+				await interaction.channel.send({embeds: [error_embed]});
+			} catch (error) {
+				console.warn("Failed to send error message to channel.");
+				console.warn("Error: " + error.message);
+			}
 		}
 	}
 });
