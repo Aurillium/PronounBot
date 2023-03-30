@@ -375,7 +375,12 @@ process.on("message", message => {
     if (!message.type) return false;
 
 	// Messages without the type property aren't our concern
-	console.log("Message received: ", message);
+	// Likewise don't include the shard_id message because it's
+	// - Easy to test
+	// - Won't have the console stamp
+	if (message.type !== "shard_id") {
+		console.log("Message received: ", message);
+	}
 
     if (message.type == "shard_id") {
 		// When the shard logs in, the manager sends it its ID
