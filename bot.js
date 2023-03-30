@@ -35,7 +35,6 @@ const client = new Client({
 
 let loaded = false;
 let exitting = false;
-let full_exit = false;
 
 const db = mysql.createConnection({
 	host: database.address,
@@ -391,7 +390,6 @@ process.on("message", message => {
 	} else if (message.type == "exit") {
 		// On a controlled exit we should get a message telling us
 		// to hang until the manager exits
-		full_exit = true;
 		onExit().then(() => {
 			console.log("Shard exited.");
 			process.exit();
@@ -412,14 +410,12 @@ async function onExit() {
 	console.log("Shard ready to exit.");
 	// Sleep to allow the shard manager to catch up and send the exit message
 	await sleep(500);
-	if (full_exit) {
-		// Wait forever until the process disconnects, then finish exitting
-		// This prevents the shard being respawned
-		await new Promise(r=>{process.on("disconnect",()=>{r();})});
-		// This is a scuffed line but all it does is registers an event handler
-		// for the process disconnecting that resolves the promise, ending the
-		// await and allowing us to proceed with exitting cleanly
-	}
+	// Wait forever until the process disconnects, then finish exitting
+	// This prevents the shard being respawned
+	await new Promise(r=>{process.on("disconnect",()=>{r();})});
+	// This is a scuffed line but all it does is registers an event handler
+	// for the process disconnecting that resolves the promise, ending the
+	// await and allowing us to proceed with exitting cleanly
 }
 
 // https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot%20applications.commands
