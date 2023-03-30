@@ -36,7 +36,7 @@ const client = new Client({
 let loaded = false;
 let exitting = false;
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
 	host: database.address,
 	user: database.username,
 	port: database.port,
