@@ -1,6 +1,6 @@
 "use strict";
 
-const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton, Options } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Options, ActivityType } = require('discord.js');
 const { token, testing_mode, database } = require('./config.json');
 const { message_embed, sleep, server_count, stamp_console } = require("./shared.js");
 const fs = require('node:fs');
@@ -9,7 +9,7 @@ const util = require('util');
 const { generate_sentences, expand_set } = require('./engine.js');
 
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES],
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages],
 	partials: ["CHANNEL"],
 	makeCache: Options.cacheWithLimits({
 		...Options.DefaultMakeCacheSettings,
@@ -33,6 +33,7 @@ const client = new Client({
 	})
 });
 
+let loaded = false;
 let exitting = false;
 let full_exit = false;
 
@@ -57,7 +58,7 @@ for (const file of button_files) {
 	button_responses[file.slice(0, -3)] = require("./buttons/" + file).response;
 }
 
-let commandsEmbed = new MessageEmbed()
+let commandsEmbed = new EmbedBuilder()
 	.setColor("#FF8758")
 	.setTitle("Command List")
 	.setDescription("Here's a list of commands for Pronouns Bot:\n(Required arguments look like `<this>` and optional ones look like `[this]`)")
@@ -91,22 +92,28 @@ async function change_status() {
 		delay = 1000 * 4;
 	}
 	while (true) {
-		if (!exitting) {
-			client.user.setActivity('/help 🏳️‍🌈🏳️‍⚧️', { type: 'LISTENING' });
-		} else break;
-		await sleep(delay);
-		if (!exitting) {
-			client.user.setActivity((await server_count(client)).toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
-		} else break;
-		await sleep(delay);
-		if (!exitting) {
-			client.user.setActivity("shard #" + client.shard_id + " 🏳️‍🌈🏳️‍⚧️", { type: 'WATCHING' });
-		} else break;
+		// Only change status when all shards are loaded
+		if (loaded) {
+			client.user.setStatus('online');
+			if (!exitting) {
+				client.user.setActivity('/help 🏳️‍🌈🏳️‍⚧️', { type: ActivityType.Listening });
+			} else break;
+			await sleep(delay);
+			if (!exitting) {
+				client.user.setActivity((await server_count(client)).toString() + " servers 🏳️‍🌈🏳️‍⚧️", { type: ActivityType.Watching });
+			} else break;
+			await sleep(delay);
+			if (!exitting) {
+				client.user.setActivity("shard #" + client.shard_id + " 🏳️‍🌈🏳️‍⚧️", { type: ActivityType.Watching });
+			} else break;
+		}
 		await sleep(delay);
 	}
 }
 
 client.on('ready', () => {
+	client.user.setActivity('Starting... 🏳️‍🌈🏳️‍⚧️', { type: ActivityType.Playing });
+	client.user.setStatus('idle')
 	change_status().catch(e => {
 		console.log("Status change failed:");
 		console.log(e);
@@ -153,7 +160,7 @@ client.on('interactionCreate', async interaction => {
 			console.warn("  Custom ID: " + interaction.customId);
 		}
 		console.warn("Trace: " + error.stack);
-		let error_embed = new MessageEmbed()
+		let error_embed = new EmbedBuilder()
 			.setColor("#FF0000")
 			.setTitle("Oops!")
 			.setAuthor(author)
@@ -180,13 +187,13 @@ client.on('messageCreate', async message => {
 		}
 		if (message.author.bot) return;
 
-		const deleter = new MessageActionRow()
+		const deleter = new ActionRowBuilder()
 			.addComponents(
-				new MessageButton()
+				new ButtonBuilder()
 					.setCustomId("delete_try:" + message.author.id)
 					.setLabel("Delete")
 					.setEmoji("🗑️")
-					.setStyle("DANGER"),
+					.setStyle(ButtonStyle.Danger),
 			);
 
 		let raw_names = [];
@@ -351,6 +358,11 @@ client.on('messageCreate', async message => {
 			return; // Nothing we can do
 		}
 
+		if (error.message === "Invalid Form Body") {
+			// > 4000 char messages shouldn't be possible anymore so this would be odd
+			// We did receive a system message though and it would be good to log that 
+		}
+
 		console.warn("=== ERROR ===");
 		console.warn("Error: " + error.message);
 		console.warn("Command Content: " + message.content);
@@ -363,13 +375,20 @@ client.on('messageCreate', async message => {
 process.on("message", message => {
     if (!message.type) return false;
 
+	// Messages without the type property aren't our concern
+	console.log("Message received: ", message);
+
     if (message.type == "shard_id") {
 		// When the shard logs in, the manager sends it its ID
 		// for its console stamp
 		stamp_console('SHARD ' + message.data.toString());
 		client.shard_id = message.data;
         console.log(`Logged in as ${client.user.tag}!`);
-    } else if (message.type == "exit") {
+    } else if (message.type == "loaded") {
+		// When all shards are loaded we can communicate with the
+		// shard manager
+		loaded = true;
+	} else if (message.type == "exit") {
 		// On a controlled exit we should get a message telling us
 		// to hang until the manager exits
 		full_exit = true;
@@ -379,7 +398,7 @@ process.on("message", message => {
 async function onExit() {
 	exitting = true;
 	console.log("Exitting...");
-	client.user.setActivity('Restarting... 🏳️‍🌈🏳️‍⚧️', { type: 'PLAYING' });
+	client.user.setActivity('Restarting... 🏳️‍🌈🏳️‍⚧️', { type: ActivityType.Playing });
 	client.user.setStatus('idle');
 	//db.end();
 	console.log("Shard ready to exit.");

@@ -109,6 +109,9 @@ manager.spawn().then(shards => {
 			console.log(e);
 		});
 	}
+	for (const [i, shard] of shards) {
+		shard.send({type: "loaded"});
+	}
 });
 
 async function onExit() {

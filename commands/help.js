@@ -1,10 +1,10 @@
 "use strict";
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { client_id } = require('../config.json');
 
-const helpEmbed = new MessageEmbed()
+const helpEmbed = new EmbedBuilder()
 	.setColor("#FF8758")
 	.setTitle("Pronoun Bot")
 	.setDescription("Pronoun Bot is, as the name might suggest, a bot to help you test pronouns!")
@@ -20,16 +20,16 @@ exports.data = new SlashCommandBuilder()
 	.setName('help')
 	.setDescription('Displays help on the bot and pronouns!');
 
-const row = new MessageActionRow()
+const row = new ActionRowBuilder()
 			.addComponents(
-				new MessageButton()
+				new ButtonBuilder()
 					.setURL("https://discord.gg/ZnRzV469rJ")
 					.setLabel("Support Server")
-					.setStyle("LINK"),
-				new MessageButton()
+					.setStyle(ButtonStyle.Link),
+				new ButtonBuilder()
 					.setURL(`https://discord.com/api/oauth2/authorize?client_id=${client_id}&permissions=2147483648&scope=bot%20applications.commands`)
 					.setLabel("Invite Link")
-					.setStyle("LINK"),
+					.setStyle(ButtonStyle.Link),
 			);
 
 exports.response = async function(interaction) {

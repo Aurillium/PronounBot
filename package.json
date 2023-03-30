@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@discordjs/rest": "^0.5.0",
+    "@discordjs/rest": "^1.6.0",
     "better-sqlite3": "^7.5.3",
     "console-stamp": "^3.0.6",
-    "discord-api-types": "^0.33.5",
-    "discord.js": "^13.8.0",
+    "discord-api-types": "^0.37.37",
+    "discord.js": "^14.8.0",
     "mysql": "^2.18.1"
   }
 }

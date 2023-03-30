@@ -1,11 +1,11 @@
 "use strict";
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { client_id } = require('../config.json');
 const { delete_row } = require("../shared.js");
 
-const helpEmbed = new MessageEmbed()
+const helpEmbed = new EmbedBuilder()
 	.setColor("#FF8758")
 	.setTitle("Pronoun Bot - @mention Guide")
 	.setDescription("Welcome to the @mention command guide! This command works a bit differently to the others. You can activate it by starting your message with '<@" + client_id + ">' and having each option on a new line. For example:\n> <@" + client_id + ">\n> Name: Iota\n> Pronouns: she/her\n> Pronouns: they/them\nHowever there are many more ways to use this command which will be described below:")

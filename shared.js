@@ -1,6 +1,6 @@
 "use strict";
 
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { database, testing_mode, token } = require("./config.json");
 const crypto = require('crypto');
 
@@ -10,17 +10,17 @@ exports.client_id = Buffer.from(token.split(".")[0], "base64url").toString();
 
 exports.sleep = ms => new Promise(r => setTimeout(r, ms));
 
-exports.delete_row = new MessageActionRow()
+exports.delete_row = new ActionRowBuilder()
 			.addComponents(
-				new MessageButton()
+				new ButtonBuilder()
                     .setCustomId("delete_try")
 					.setLabel("Delete")
                     .setEmoji("🗑️")
-					.setStyle("DANGER"),
+					.setStyle(ButtonStyle.Danger),
 			);
 
 exports.message_embed = function(description, colour="#FF0000") {
-	return new MessageEmbed()
+	return new EmbedBuilder()
 		.setColor(colour)
 		.setDescription(description);
 }
