@@ -392,6 +392,14 @@ process.on("message", message => {
 		// On a controlled exit we should get a message telling us
 		// to hang until the manager exits
 		full_exit = true;
+		onExit().then(() => {
+			console.log("Shard exited.");
+			process.exit();
+		}).catch(error => {
+			console.log(error);
+			console.log("Shard exited with errors.");
+			process.exit();
+		});
 	}
 });
 
@@ -413,17 +421,6 @@ async function onExit() {
 		// await and allowing us to proceed with exitting cleanly
 	}
 }
-
-process.on("SIGINT", () => {
-	onExit().then(() => {
-		console.log("Shard exited.");
-		process.exit();
-	}).catch(error => {
-		console.log(error);
-		console.log("Shard exited with errors.");
-		process.exit();
-	});
-});
 
 // https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot%20applications.commands
 client.login(token);
