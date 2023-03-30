@@ -423,5 +423,9 @@ async function onExit() {
 	// await and allowing us to proceed with exitting cleanly
 }
 
+process.on("SIGINT", () => {
+	// Do nothing; Ctrl+C is handled by the shard manager
+});
+
 // https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot%20applications.commands
 client.login(token);
