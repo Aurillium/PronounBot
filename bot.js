@@ -1,6 +1,6 @@
 "use strict";
 
-const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Options, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Options, ActivityType, Partials } = require('discord.js');
 const { token, testing_mode, database } = require('./config.json');
 const { message_embed, sleep, server_count, stamp_console } = require("./shared.js");
 const fs = require('node:fs');
@@ -10,7 +10,7 @@ const { generate_sentences, expand_set } = require('./engine.js');
 
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages],
-	partials: ["CHANNEL"],
+	partials: [Partials.Channel],
 	makeCache: Options.cacheWithLimits({
 		...Options.DefaultMakeCacheSettings,
 		ReactionManager: 0,
