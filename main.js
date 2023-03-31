@@ -15,6 +15,9 @@ stamp_console('MAIN');
 const commands = [];
 const commandFiles = readdirSync('./commands').filter(file => file.endsWith('.js'));
 
+const rest = new REST({ version: '9' }).setToken(config.token);
+const registered = [];
+
 (async () => {
 
 	for (const file of commandFiles) {
@@ -23,9 +26,6 @@ const commandFiles = readdirSync('./commands').filter(file => file.endsWith('.js
 	}
 	
 	commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
-	
-	const rest = new REST({ version: '9' }).setToken(config.token);
-	const registered = [];
 
 	try {
 		console.log('Started refreshing slash commands.');
