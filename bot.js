@@ -1,12 +1,13 @@
 "use strict";
 
-const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Options, ActivityType, Partials } = require('discord.js');
-const { token, testing_mode, database } = require('./config.json');
-const { message_embed, sleep, server_count, stamp_console } = require("./shared.js");
-const fs = require('node:fs');
-const mysql = require('mysql');
-const util = require('util');
-const { generate_sentences, expand_set } = require('./engine.js');
+import config from "./config.json" assert { type: "json" };
+
+import { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Options, ActivityType, Partials } from 'discord.js';
+import { message_embed, sleep, server_count, stamp_console } from "./shared.js";
+import { readdirSync } from 'node:fs';
+import { createPool } from 'mysql';
+import { promisify } from 'util';
+import { generate_sentences, expand_set } from './engine.js';
 
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages],
@@ -36,25 +37,37 @@ const client = new Client({
 let loaded = false;
 let exitting = false;
 
-const db = mysql.createPool({
-	host: database.address,
-	user: database.username,
-	port: database.port,
-	password: database.password,
-	database: database.database
-});
-const query = util.promisify(db.query).bind(db);
+let db;
+if (config.socket !== undefined) {
+	db = createPool({
+		user: config.database.username,
+		password: config.database.password,
+		database: config.database.database,
+		socketPath: config.database.socket
+	});
+} else {
+	db = createPool({
+		port: config.database.port,
+		host: config.database.address,
+		user: config.database.username,
+		password: config.database.password,
+		database: config.database.database
+	});
+}
+const query = promisify(db.query).bind(db);
 db.async_query = query;
 
 const command_responses = {};
 const button_responses = {};
-const button_files = fs.readdirSync('./buttons').filter(file => file.endsWith('.js'));
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const button_files = readdirSync('./buttons').filter(file => file.endsWith('.js'));
+const commandFiles = readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 const author = { name: "Aurillium", iconURL: "https://avatars.githubusercontent.com/u/57483028", url: "https://github.com/Aurillium" };
 
 for (const file of button_files) {
-	button_responses[file.slice(0, -3)] = require("./buttons/" + file).response;
+	import("./buttons/" + file).then((module) => {
+		button_responses[file.slice(0, -3)] = module.response
+	});
 }
 
 let commandsEmbed = new EmbedBuilder()
@@ -64,21 +77,23 @@ let commandsEmbed = new EmbedBuilder()
 	.setAuthor(author);
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	command_responses[command.data.name] = command.response;
+	import("./commands/" + file).then((command) => {
 
-	let command_string = "/" + command.data.name;
-	command.data.options.forEach(option => {
-		let j = option.toJSON();
-		if (j.required) {
-			command_string += " <" + option.toJSON().name + ">";
-		} else {
-			command_string += " [" + option.toJSON().name + "]";
-		}
-	});
-	commandsEmbed = commandsEmbed.addFields({
-		name: command.data.name,
-		value: command.doc + "\n**Usage:** `" + command_string + "`\n** **"
+		command_responses[command.data.name] = command.response;
+
+		let command_string = "/" + command.data.name;
+		command.data.options.forEach(option => {
+			let j = option.toJSON();
+			if (j.required) {
+				command_string += " <" + option.toJSON().name + ">";
+			} else {
+				command_string += " [" + option.toJSON().name + "]";
+			}
+		});
+		commandsEmbed = commandsEmbed.addFields({
+			name: command.data.name,
+			value: command.doc + "\n**Usage:** `" + command_string + "`\n** **"
+		});
 	});
 }
 command_responses["commands"] = async function(interaction) {
@@ -87,7 +102,7 @@ command_responses["commands"] = async function(interaction) {
 
 async function change_status() {
 	let delay = 1000 * 60;
-	if (testing_mode) {
+	if (config.testing_mode) {
 		delay = 1000 * 4;
 	}
 	while (true) {
@@ -428,4 +443,4 @@ process.on("SIGINT", () => {
 });
 
 // https://discord.com/api/oauth2/authorize?client_id=983907393823969312&permissions=2147483648&scope=bot%20applications.commands
-client.login(token);
+client.login(config.token);

@@ -1,35 +1,38 @@
 "use_strict";
 
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { ShardingManager } = require('discord.js');
-const { token, testing_mode, testing_guild, topgg_token } = require("./config.json");
-const { stamp_console, client_id, sleep } = require('./shared');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
-const https = require('https');
-const fs = require('node:fs');
+import config from "./config.json" assert { type: "json" };
+
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { ShardingManager } from 'discord.js';
+import { stamp_console, client_id, sleep } from './shared.js';
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
+import { request } from 'https';
+import { readdirSync } from 'node:fs';
 
 stamp_console('MAIN');
 
 const commands = [];
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	commands.push(command.data.toJSON());
-}
-commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
-
-const rest = new REST({ version: '9' }).setToken(token);
-const registered = [];
+const commandFiles = readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 (async () => {
+
+	for (const file of commandFiles) {
+		const command = await import("./commands/" + file);
+		commands.push(command.data.toJSON());
+	}
+	
+	commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
+	
+	const rest = new REST({ version: '9' }).setToken(config.token);
+	const registered = [];
+
 	try {
 		console.log('Started refreshing slash commands.');
 
-		if (testing_mode) {
+		if (config.testing_mode) {
 			let registered_commands = await rest.put(	
-				Routes.applicationGuildCommands(client_id, testing_guild),
+				Routes.applicationGuildCommands(client_id, config.testing_guild),
 				{ body: commands },
 			);
 			registered_commands.forEach(command => {
@@ -55,7 +58,7 @@ async function update_topgg() {
 		path: "/api/bots/" + client_id + "/stats",
 		method: "POST",
 		headers: {
-			 'Authorization': topgg_token,
+			 'Authorization': config.topgg_token,
 			 'Content-Type': 'application/json'
 		   }
 	};
@@ -64,7 +67,7 @@ async function update_topgg() {
 		let content = '{"server_count":' + servers.toString() + '}';
 		options.headers['Content-Length'] = content.length;
 
-		let req = https.request(options, (res) => {
+		let req = request(options, (res) => {
 			console.log('Status:', res.statusCode);
 			if (res.statusCode !== 200) {
 				console.log('Headers:', res.headers);
@@ -84,7 +87,7 @@ async function update_topgg() {
 }
 
 const manager = new ShardingManager('./bot.js', {
-	token: token
+	token: config.token
 });
 
 manager.on("shardCreate", shard => {
@@ -97,13 +100,13 @@ manager.on("shardCreate", shard => {
 });
 
 // Make sure we have some shards to test
-if (testing_mode) {
+if (config.testing_mode) {
 	manager.totalShards = 2;
 }
 
 // When all shards are up
 manager.spawn().then(shards => {
-	if (!testing_mode) {
+	if (!config.testing_mode) {
 		update_topgg().catch(e => {
 			console.log("Top.gg update failed:");
 			console.log(e);
@@ -118,11 +121,11 @@ async function onExit() {
 	for (const [i, shard] of manager.shards) {
 		shard.send({type: "exit"});
 	}
-	if (testing_mode) {
-		let registered = await rest.get(Routes.applicationGuildCommands(client_id, testing_guild));
+	if (config.testing_mode) {
+		let registered = await rest.get(Routes.applicationGuildCommands(client_id, config.testing_guild));
 		for (let i = 0; i < registered.length; i++) {
 			const command = registered[i];
-			await rest.delete(Routes.applicationGuildCommand(client_id, testing_guild, command.id));
+			await rest.delete(Routes.applicationGuildCommand(client_id, config.testing_guild, command.id));
 			console.log(`- Unregistered '${command.name}'.`);
 		}
 		console.log("Unregistered all commands; Exitting now.");

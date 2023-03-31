@@ -1,10 +1,10 @@
 "use strict";
 
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { generate_sentences } = require("../engine.js");
-const { delete_row, name_length_error } = require("../shared.js");
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { generate_sentences } from "../engine.js";
+import { delete_row, name_length_error } from "../shared.js";
 
-exports.data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
 	.setName("try-random")
 	.setDescription("Tries out a random pronoun set!")
 	.addStringOption(option =>
@@ -17,7 +17,7 @@ exports.data = new SlashCommandBuilder()
 			.setRequired(false)
 	);
 
-exports.response = async function(interaction, db) {
+export async function response(interaction, db) {
 	const name = interaction.options.getString("name");
 	if (name !== null && name.length > 50) {
 		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
@@ -32,4 +32,4 @@ exports.response = async function(interaction, db) {
 	await interaction.reply({content: await generate_sentences([[row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive, row.Plural]], name ? [name] : [], db, response), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
-exports.doc = `Try out a set of pronouns by specifying one of each type of pronoun in a set, then optionally add a name and whether the pronouns are plural or singular.`;
+export const doc = `Try out a set of pronouns by specifying one of each type of pronoun in a set, then optionally add a name and whether the pronouns are plural or singular.`;

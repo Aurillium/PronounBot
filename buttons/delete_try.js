@@ -1,8 +1,8 @@
 "use strict";
 
-const { message_embed } = require("../shared.js");
+import { message_embed } from "../shared.js";
 
-exports.response = async function(interaction, arg) {
+export async function response(interaction, arg) {
     let allowed = false;
     if (interaction.message.interaction != undefined) {
         if (interaction.message.interaction.user.id === interaction.user.id) {

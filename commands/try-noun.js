@@ -1,10 +1,10 @@
 "use strict";
 
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { generate_sentences } = require("../engine.js");
-const { delete_row, name_length_error, pronoun_length_error } = require("../shared.js");
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { generate_sentences } from "../engine.js";
+import { delete_row, name_length_error, pronoun_length_error } from "../shared.js";
 
-exports.data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
 	.setName("try-noun")
 	.setDescription("Try noun pronouns!")
 	.addStringOption(option =>
@@ -22,7 +22,7 @@ exports.data = new SlashCommandBuilder()
 			.setRequired(false)
 	);
 
-exports.response = async function(interaction, db) {
+export async function response(interaction, db) {
 	const noun = interaction.options.getString("noun");
 	const name = interaction.options.getString("name");
 	if (noun.length > 20) {
@@ -37,4 +37,4 @@ exports.response = async function(interaction, db) {
 	await interaction.reply({content: await generate_sentences([[noun, noun, noun + "'s", noun + "'s", noun + "self", false]], name ? [name]: [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
-exports.doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;
+export const doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;

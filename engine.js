@@ -19,7 +19,7 @@ const she_her = ["she", "her", "her", "hers", "herself", false];
 const they_them = ["they", "them", "their", "theirs", "themself", true];
 const it_its = ["it", "it", "its", "its", "itself", false];
 
-exports.expand_set = function(raw_set) {
+export function expand_set (raw_set) {
 	let colon_index = raw_set.lastIndexOf(":");
 	let plural_str = "";
 	let plural = null;
@@ -73,7 +73,7 @@ exports.expand_set = function(raw_set) {
 	}
 }
 
-exports.generate_sentences = async function(sets, names, db, before="Okay, how do these look?", after="") {
+export async function generate_sentences(sets, names, db, before="Okay, how do these look?", after="") {
 	if (sets.length === 0 && names.length === 0) {
 		// I think this is pretty self-explanatory
 		return "Can't make sentences with no names or pronouns :(";

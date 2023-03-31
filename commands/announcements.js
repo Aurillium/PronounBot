@@ -1,8 +1,8 @@
 "use strict";
 
-const { SlashCommandBuilder } = require('@discordjs/builders');
+import { SlashCommandBuilder } from '@discordjs/builders';
 
-exports.data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
 	.setName("announcements")
 	.setDescription("Manage Pronoun Bot's announcement channel!")
 	.addChannelOption(option =>
@@ -15,7 +15,7 @@ exports.data = new SlashCommandBuilder()
 			.setRequired(false)
 	);
 
-exports.response = async function(interaction, db) {
+export async function response(interaction, db) {
     const channel = interaction.options.getChannel("channel");
     //await channel.send("Announcement channel is set!");
 	await interaction.reply("This command is yet to be implemented...")
