@@ -1,0 +1,15 @@
+name: deploy-beta
+run-name: Deploys Pronoun Bot Beta
+on: [push]
+jobs:
+  deploy-beta:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Upload and start
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        command: PronounBotBeta/deploy
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        privateKey: ${{ secrets.PRIVATE_KEY}}
