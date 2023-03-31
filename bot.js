@@ -34,6 +34,7 @@ const client = new Client({
 	})
 });
 
+let dead = false;
 let loaded = false;
 let exitting = false;
 
@@ -135,6 +136,8 @@ client.on('ready', () => {
 });
 
 client.on('interactionCreate', async interaction => {
+	if (dead) return;
+
 	try {
 		let initial = performance.now();
 		if (interaction.isCommand()) {
@@ -193,6 +196,8 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.on('messageCreate', async message => {
+	if (dead) return;
+
 	try {
 		if (message.mentions.parsedUsers === null) {
 			if (message.content == null) return;
@@ -388,6 +393,7 @@ client.on('messageCreate', async message => {
 
 process.on("message", message => {
     if (!message.type) return false;
+	if (dead) return;
 
 	// Messages without the type property aren't our concern
 	// Likewise don't include the shard_id message because it's
@@ -430,6 +436,8 @@ async function onExit() {
 	console.log("Shard ready to exit.");
 	// Sleep to allow the shard manager to catch up and send the exit message
 	await sleep(500);
+	// Stop replying to interactions
+	dead = true;
 	// Wait forever until the process disconnects, then finish exitting
 	// This prevents the shard being respawned
 	await new Promise(r=>{process.on("disconnect",()=>{r();})});
