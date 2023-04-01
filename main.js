@@ -16,42 +16,34 @@ const commands = [];
 const commandFiles = readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 const rest = new REST({ version: '9' }).setToken(config.token);
-const registered = [];
 
-(async () => {
+// In production mode, commands are loaded via a different script
+if (config.testing_mode) {
+	(async () => {
 
-	for (const file of commandFiles) {
-		const command = await import("./commands/" + file);
-		if (config.testing_mode || !command.testing) {
-			commands.push(command.data.toJSON());
+		for (const file of commandFiles) {
+			const command = await import("./commands/" + file);
+			if (config.testing_mode || !command.testing) {
+				commands.push(command.data.toJSON());
+			}
 		}
-	}
+		
+		commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
 	
-	commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
-
-	try {
-		console.log('Started refreshing slash commands.');
-
-		if (config.testing_mode) {
-			let registered_commands = await rest.put(	
+		try {
+			console.log('Started refreshing slash commands.');
+	
+			await rest.put(	
 				Routes.applicationGuildCommands(client_id, config.testing_guild),
 				{ body: commands },
 			);
-			registered_commands.forEach(command => {
-				registered.push(command.id);
-			});
-		} else {
-			await rest.put(
-				Routes.applicationCommands(client_id),
-				{ body: commands },
-			);
+	
+			console.log('Successfully reloaded slash commands.');
+		} catch (error) {
+			console.error(error);
 		}
-
-		console.log('Successfully reloaded slash commands.');
-	} catch (error) {
-		console.error(error);
-	}
-})();
+	})();
+}
 
 async function update_topgg() {
 	let options = {
@@ -123,6 +115,7 @@ async function onExit() {
 	for (const [i, shard] of manager.shards) {
 		shard.send({type: "exit"});
 	}
+	// In production mode, commands are unloaded via a different script
 	if (config.testing_mode) {
 		let registered = await rest.get(Routes.applicationGuildCommands(client_id, config.testing_guild));
 		for (let i = 0; i < registered.length; i++) {
@@ -131,8 +124,6 @@ async function onExit() {
 			console.log(`- Unregistered '${command.name}'.`);
 		}
 		console.log("Unregistered all commands; Exitting now.");
-	} else {
-		console.log("Production mode does not unregister commands; Exitting now.");
 	}
 }
 
