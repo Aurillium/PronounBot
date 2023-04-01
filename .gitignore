@@ -1,9 +1,12 @@
 # Config
 config.json
 
-# Node stuff
+# Package info
 node_modules/
 package-lock.json
 
 # Node logs
 isolate-*-*-v8.log
+
+# Environment-specific files
+env/**
