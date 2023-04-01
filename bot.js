@@ -85,14 +85,14 @@ for (const file of commandFiles) {
 		command_responses[command.data.name] = command.response;
 
 		let command_string = "/" + command.data.name;
-		command.data.options.forEach(option => {
+		for (const option of command.data.options) {
 			let j = option.toJSON();
 			if (j.required) {
 				command_string += " <" + option.toJSON().name + ">";
 			} else {
 				command_string += " [" + option.toJSON().name + "]";
 			}
-		});
+		}
 		commandsEmbed = commandsEmbed.addFields({
 			name: command.data.name,
 			value: command.doc + "\n**Usage:** `" + command_string + "`\n** **"

@@ -118,8 +118,7 @@ async function onExit() {
 	// In production mode, commands are unloaded via a different script
 	if (config.testing_mode) {
 		let registered = await rest.get(Routes.applicationGuildCommands(client_id, config.testing_guild));
-		for (let i = 0; i < registered.length; i++) {
-			const command = registered[i];
+		for (const command of registered) {
 			await rest.delete(Routes.applicationGuildCommand(client_id, config.testing_guild, command.id));
 			console.log(`- Unregistered '${command.name}'.`);
 		}
