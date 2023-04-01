@@ -39,7 +39,7 @@ let loaded = false;
 let exitting = false;
 
 let db;
-if (config.socket !== undefined) {
+if (config.database.socket !== undefined) {
 	db = createPool({
 		user: config.database.username,
 		password: config.database.password,
