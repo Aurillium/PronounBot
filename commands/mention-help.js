@@ -26,4 +26,5 @@ export async function response(interaction) {
 	await interaction.reply({embeds: [helpEmbed], components: [delete_row]});
 }
 
+export const testing = false;
 export const doc = `Get help with the @mention command`

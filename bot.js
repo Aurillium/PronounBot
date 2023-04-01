@@ -80,6 +80,8 @@ let commandsEmbed = new EmbedBuilder()
 for (const file of commandFiles) {
 	import("./commands/" + file).then((command) => {
 
+		if (!config.testing_mode && command.testing) return;
+
 		command_responses[command.data.name] = command.response;
 
 		let command_string = "/" + command.data.name;

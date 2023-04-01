@@ -20,3 +20,5 @@ export async function response(interaction, db) {
     //await channel.send("Announcement channel is set!");
 	await interaction.reply("This command is yet to be implemented...")
 }
+
+export const testing = false;

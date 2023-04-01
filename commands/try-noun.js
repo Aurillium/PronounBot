@@ -37,4 +37,5 @@ export async function response(interaction, db) {
 	await interaction.reply({content: await generate_sentences([[noun, noun, noun + "'s", noun + "'s", noun + "self", false]], name ? [name]: [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
+export const testing = false;
 export const doc = `Try out a set of noun pronouns. Just add a noun and optionally a name and you're set!`;

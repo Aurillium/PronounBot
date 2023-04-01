@@ -32,4 +32,5 @@ export async function response(interaction, db) {
 	await interaction.reply({content: await generate_sentences([[row.Subjective, row.Objective, row.Possessive, row.Possessive2, row.Reflexive, row.Plural]], name ? [name] : [], db, response), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
+export const testing = false;
 export const doc = `Try out a set of pronouns by specifying one of each type of pronoun in a set, then optionally add a name and whether the pronouns are plural or singular.`;

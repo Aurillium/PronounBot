@@ -37,4 +37,5 @@ export async function response(interaction) {
 	await interaction.reply({embeds: [helpEmbed], components: [row]});
 }
 
+export const testing = false;
 export const doc = `Display information about the bot`

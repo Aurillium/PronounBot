@@ -46,4 +46,5 @@ export async function response(interaction, db) {
 	await interaction.reply({content: await generate_sentences([[set[0], set[1], set[2], set[3], set[4], plural]], name ? [name] : [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
+export const testing = false;
 export const doc = `Try out a set of pronouns in the form of 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive', then optionally add a name and tell the bot if the pronouns are plural.`;

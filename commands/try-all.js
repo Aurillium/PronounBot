@@ -35,4 +35,5 @@ export async function response(interaction, db) {
 	await interaction.reply({content: await generate_sentences(sets, name ? [name] : [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
 }
 
+export const testing = false;
 export const doc = `Try out using all pronouns. Just optionally enter a name and the bot will give you some example sentences.`;

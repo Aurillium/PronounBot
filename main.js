@@ -22,7 +22,9 @@ const registered = [];
 
 	for (const file of commandFiles) {
 		const command = await import("./commands/" + file);
-		commands.push(command.data.toJSON());
+		if (config.testing_mode || !command.testing) {
+			commands.push(command.data.toJSON());
+		}
 	}
 	
 	commands.push(new SlashCommandBuilder().setName('commands').setDescription('Displays a list of commands!'));
