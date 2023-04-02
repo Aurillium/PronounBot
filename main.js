@@ -57,24 +57,44 @@ async function update_topgg() {
 		   }
 	};
 	while (true) {
+		// Get server number by adding the value from each shard
 		let servers = (await manager.fetchClientValues("guilds.cache.size")).reduce((acc, guildCount) => acc + guildCount, 0);
+		
+		// Set up request content (JSON object with server count)
 		let content = '{"server_count":' + servers.toString() + '}';
 		options.headers['Content-Length'] = content.length;
 
 		let req = request(options, (res) => {
+			// Callback for once our response is received
 			console.log('Status:', res.statusCode);
+
+			// If we didn't have a successful response, debugging
 			if (res.statusCode !== 200) {
-				console.log('Headers:', res.headers);
-				console.log('Data:');
-				res.on('data', process.stdout.write);
+				console.warn('Headers:', res.headers);
+				console.warn('Data:');
+				// Print the request data
+				res.on('data', (data) => {
+					// If we don't check for errors inside the callback, the app will crash
+					// This slowly causes all the shards to fail and not be restarted
+					try {
+						process.stdout.write(data);
+					} catch (error) {
+						console.warn("Could not write response data.");
+					}
+				});
 			}
 		});
 		
-		req.on('error', console.log);
+		// No error checking here because we would be using
+		// the console.warn function anyway, and if it doesn't
+		// work for this, it wouldn't work for our error
+		req.on('error', console.warn);
 		
+		// Write server count to request
 		req.write(content);
+		// Send it off
 		req.end();
-		console.log("TOP.GG STATS UPLOADED.");
+		console.log("Tog.gg statistics uploaded, awaiting response...");
 
 		await sleep(1000 * 3600);
 	}
