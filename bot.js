@@ -37,6 +37,7 @@ const client = new Client({
 let dead = false;
 let loaded = false;
 let exitting = false;
+let disconnected = false;
 
 let db;
 if (config.database.socket !== undefined) {
@@ -424,12 +425,7 @@ async function onExit() {
 	await sleep(500);
 	// Stop replying to interactions
 	dead = true;
-	// Wait forever until the process disconnects, then finish exitting
-	// This prevents the shard being respawned
-	await new Promise(r=>{process.on("disconnect",()=>{r();})});
-	// This is a scuffed line but all it does is registers an event handler
-	// for the process disconnecting that resolves the promise, ending the
-	// await and allowing us to proceed with exitting cleanly
+	// And finally we exit
 }
 
 process.on("SIGINT", () => {

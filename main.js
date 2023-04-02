@@ -132,7 +132,10 @@ manager.spawn().then(shards => {
 });
 
 async function onExit() {
+	// Stop automatically respawning new shards
+	manager.respawn = false;
 	for (const [i, shard] of manager.shards) {
+		// Send a message to each of the shards to exit
 		shard.send({type: "exit"});
 	}
 	// In production mode, commands are unloaded via a different script
