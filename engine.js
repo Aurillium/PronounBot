@@ -19,7 +19,7 @@ const she_her = ["she", "her", "her", "hers", "herself", false];
 const they_them = ["they", "them", "their", "theirs", "themself", true];
 const it_its = ["it", "it", "its", "its", "itself", false];
 
-export function expand_set (raw_set) {
+export function expand_set(raw_set) {
 	let colon_index = raw_set.lastIndexOf(":");
 	let plural_str = "";
 	let plural = null;
