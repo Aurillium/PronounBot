@@ -281,22 +281,6 @@ client.on('messageCreate', async message => {
 					await message.reply({embeds: [message_embed("Invalid 'plural' option detected. Only 'yes', 'no' , 'true', 'false', or their abbreviations are valid values.")], components: [deleter]});
 					return;
 				}
-			
-			// Not relevant as the command message is visible anyway and the command works in DMs
-
-			/*} else if (key === "hidden" || key === "h") {
-				if (args.hidden !== null && !hidden_warned) {
-					await message.reply({embeds: [message_embed("Muliple 'hidden' values detected. Please only use one.")], components: [deleter]});
-					return;
-				}
-				if (value === "y" || value === "yes" || value === "t" || value === "true") {
-					args.hidden = true;
-				} else if (value === "n" || value === "no" || value === "f" || value === "false") {
-					args.hidden = false;
-				} else {
-					await message.reply({embeds: [message_embed("Invalid 'hidden' option detected. Only 'yes', 'no' , 'true', 'false', or their abbreviations are valid values.")], components: [deleter]});
-					return;
-				}*/
 			} else {
 				await message.reply({embeds: [message_embed("Invalid key: '" + key + "'. It will be ignored.")], components: [deleter]});
 			}
