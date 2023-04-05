@@ -298,12 +298,12 @@ client.on('messageCreate', async message => {
 			for (const raw_set of raw_sets) {
 				if (raw_set !== "") {
 					let set = expand_set(raw_set);
-					console.log(set);
 					if (set === null) {
 						await message.reply({embeds: [message_embed("Pronoun sets must have either four or five pronouns (check /help for more information): '" + raw_set + "'.")], components: [deleter]});
 						return;
 					}
-					for (const pronoun of set) {
+					// Loop over only the entries which are strings
+					for (const pronoun of set.slice(0, -1)) {
 						if (pronoun.length > 20) {
 							await message.reply({embeds: [message_embed("Pronouns must be at most 20 characters in length.")]});
 							return;
