@@ -375,6 +375,12 @@ client.on('messageCreate', async message => {
 		// Maybe later add the parsed parameters?
 		console.warn("Trace: " + error.stack);
 		// Inform user as well
+		let error_embed = new EmbedBuilder()
+			.setColor("#FF0000")
+			.setTitle("Oops!")
+			.setAuthor(author)
+			.setDescription("**An error has occcurred.**\nPlease share the following information (along with what you were doing at the time) in a new issue on [GitHub](https://github.com/Aurillium/PronounBot/issues/new), or on our [support server](https://discord.gg/ZnRzV469rJ), and we will look into it and resolve it.\n\n**Stack Trace:**\n" + error.stack)
+		await message.reply({embeds: [error_embed]});
 	}
 });
 
