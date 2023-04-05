@@ -181,6 +181,10 @@ client.on('interactionCreate', async interaction => {
 			console.warn("  Custom ID: " + interaction.customId);
 		}
 		console.warn("Trace: " + error.stack);
+		// Let's not report intentional crashes
+		if (error.message === "Intentional crash") {
+			error.stack = "__Intentional crash, don't report me pls!__\n\n" + error.stack;
+		}
 		let error_embed = new EmbedBuilder()
 			.setColor("#FF0000")
 			.setTitle("Oops!")
@@ -195,6 +199,11 @@ client.on('interactionCreate', async interaction => {
 				console.warn("Failed to send error message to channel.");
 				console.warn("Error: " + error.message);
 			}
+		}
+
+		// If the crash was intentional, escalate it after handling
+		if (error.message === "Intentional crash") {
+			throw error;
 		}
 	}
 });
