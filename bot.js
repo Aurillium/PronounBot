@@ -142,6 +142,7 @@ client.on('interactionCreate', async interaction => {
 	if (dead) return;
 
 	try {
+		// Command timings
 		let initial = performance.now();
 		if (interaction.isCommand()) {
 			if (interaction.commandName in command_responses) {
@@ -202,6 +203,9 @@ client.on('messageCreate', async message => {
 	if (dead) return;
 
 	try {
+		// Command timings
+		let initial = performance.now();
+
 		if (message.mentions.parsedUsers === null) {
 			if (message.content == null) return;
 		} else {
@@ -359,6 +363,9 @@ client.on('messageCreate', async message => {
 		} else {
 			await message.reply({content: sentences, components: [deleter]});
 		}
+
+		// Log time taken to execute command
+		console.log("@command took " + (performance.now() - initial).toString() + "ms");
 
 	} catch (error) {
 		if (error.message === "Missing Permissions") {
