@@ -1,6 +1,9 @@
 # Config
 config.json
 
+# MariaDB data
+mariadb_data
+
 # Package info
 node_modules/
 package-lock.json
