@@ -1,6 +1,6 @@
 "use_strict";
 
-import config from "./config.json" assert { type: "json" };
+import config from "./config.json" with { type: "json" };
 
 import { performance } from 'perf_hooks';
 import { createPool } from 'mysql';

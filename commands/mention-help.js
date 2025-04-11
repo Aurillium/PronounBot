@@ -1,6 +1,6 @@
 "use strict";
 
-import config from "../config.json" assert { type: "json" };
+import config from "../config.json" with { type: "json" };
 
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { EmbedBuilder } from 'discord.js';

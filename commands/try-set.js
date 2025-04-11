@@ -1,5 +1,6 @@
 "use strict";
 
+import { MessageFlags } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { generate_sentences, expand_set } from "../engine.js";
 import { delete_row, pronoun_length_error } from "../shared.js";
@@ -29,21 +30,21 @@ export const data = new SlashCommandBuilder()
 export async function response(interaction, db) {
 	let set = expand_set(interaction.options.getString("set"));
 	if (set === null) {
-		await interaction.reply({content: "Make sure your pronouns are in the form 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive' (`/help` for more information)", ephemeral: true});
+		await interaction.reply({content: "Make sure your pronouns are in the form 'subjective/objective/possessive/possessive/reflexive' or 'subjective/objective/possessive/reflexive' (`/help` for more information)", flags: MessageFlags.Ephemeral});
 		return;
 	}
 	if (set[0].length > 20 || set[1].length > 20 || set[2].length > 20 || set[3].length > 20 || set[4].length > 20) {
-		await interaction.reply({ephemeral: true, embeds: [pronoun_length_error]});
+		await interaction.reply({flags: MessageFlags.Ephemeral, embeds: [pronoun_length_error]});
 		return;
 	}
 	const name = interaction.options.getString("name");
 	if (name !== null && name.length > 50) {
-		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		await interaction.reply({flags: MessageFlags.Ephemeral, embeds: [name_length_error]});
 		return;
 	}
 	const plural = interaction.options.getBoolean("plural") ?? set[5];
 	const hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: await generate_sentences([[set[0], set[1], set[2], set[3], set[4], plural]], name ? [name] : [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: await generate_sentences([[set[0], set[1], set[2], set[3], set[4], plural]], name ? [name] : [], db), flags: hidden ? MessageFlags.Ephemeral : 0, components: hidden ? [] : [delete_row]});
 }
 
 export const testing = false;

@@ -1,5 +1,6 @@
 "use strict";
 
+import { MessageFlags } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { generate_sentences } from "../engine.js";
 import { delete_row, name_length_error, pronoun_length_error } from "../shared.js";
@@ -26,15 +27,15 @@ export async function response(interaction, db) {
 	const noun = interaction.options.getString("noun");
 	const name = interaction.options.getString("name");
 	if (noun.length > 20) {
-		await interaction.reply({ephemeral: true, embeds: [pronoun_length_error]});
+		await interaction.reply({flags: MessageFlags.Ephemeral, embeds: [pronoun_length_error]});
 		return;
 	}
 	if (name !== null && name.length > 50) {
-		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		await interaction.reply({flags: MessageFlags.Ephemeral, embeds: [name_length_error]});
 		return;
 	}
 	const hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: await generate_sentences([[noun, noun, noun + "'s", noun + "'s", noun + "self", false]], name ? [name]: [], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: await generate_sentences([[noun, noun, noun + "'s", noun + "'s", noun + "self", false]], name ? [name]: [], db), flags: hidden ? MessageFlags.Ephemeral : 0, components: hidden ? [] : [delete_row]});
 }
 
 export const testing = false;

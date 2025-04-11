@@ -1,5 +1,6 @@
 "use strict";
 
+import { MessageFlags } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { generate_sentences } from "../engine.js";
 import { delete_row, name_length_error } from "../shared.js";
@@ -20,11 +21,11 @@ export const data = new SlashCommandBuilder()
 export async function response(interaction, db) {
 	const name = interaction.options.getString("name");
 	if (name.length > 50) {
-		await interaction.reply({ephemeral: true, embeds: [name_length_error]});
+		await interaction.reply({flags: MessageFlags.Ephemeral, embeds: [name_length_error]});
 		return;
 	}
 	const hidden = interaction.options.getBoolean("hidden") ?? false;
-	await interaction.reply({content: await generate_sentences([], [name], db), ephemeral: hidden, components: hidden ? [] : [delete_row]});
+	await interaction.reply({content: await generate_sentences([], [name], db), flags: hidden ? MessageFlags.Ephemeral : 0, components: hidden ? [] : [delete_row]});
 }
 
 export const testing = false;

@@ -1,6 +1,6 @@
 "use_strict";
 
-import config from "../config.json" assert { type: "json" };
+import config from "../config.json" with { type: "json" };
 
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { stamp_console, client_id } from "../shared.js";

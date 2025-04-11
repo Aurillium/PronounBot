@@ -1,6 +1,6 @@
 "use strict";
 
-import config from "./config.json" assert { type: "json" };
+import config from "./config.json" with { type: "json" };
 
 import { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Options, ActivityType, Partials } from 'discord.js';
 import { message_embed, sleep, server_count, stamp_console } from "./shared.js";

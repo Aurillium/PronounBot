@@ -1,6 +1,6 @@
 "use_strict";
 
-import config from "../config.json" assert { type: "json" };
+import config from "../config.json" with { type: "json" };
 
 import { stamp_console, client_id } from "../shared.js";
 import { REST } from "@discordjs/rest";

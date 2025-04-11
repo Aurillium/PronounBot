@@ -1,6 +1,6 @@
 "use strict";
 
-import config from "./config.json" assert { type: "json" };
+import config from "./config.json" with { type: "json" };
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { createHash } from 'crypto';
