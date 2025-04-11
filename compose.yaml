@@ -1,0 +1,15 @@
+services:
+  mariadb:
+    image: mariadb:11.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "${ROOT_PASSWORD}"
+      MYSQL_USER: "${PB_USERNAME}"
+      MYSQL_PASSWORD: "${PB_PASSWORD}"
+      MYSQL_DATABASE: "${PB_DATABASE}"
+    volumes:
+      - "./mariadb_data:/var/lib/mysql"
+
+  bot:
+    build: .
+    volumes:
+      - "./config.json:/app/config.json"
